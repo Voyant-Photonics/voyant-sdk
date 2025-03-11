@@ -31,7 +31,7 @@ To use the voyant packages, you have two options:
 
 ### Clone this repository
 
-Either way, you must start with cloning this repository:
+You should start with cloning this repository:
 
 ```bash
 git clone https://github.com/Voyant-Photonics/voyant-sdk.git
@@ -71,6 +71,9 @@ docker run --rm -it --name voyant-sdk-container --network host -v $(pwd):/worksp
 
 ### Native installation
 
+If you wish to install on your native system,
+you will need to install and manage all dependencies.
+
 #### Dependencies
 
 We have a dependency on Cap'n Proto for our message encoding.
@@ -108,8 +111,8 @@ There a number of commandline tools packaged in `voyant-api`.
 
 > Pro tip: The executables packaged in `voyant-api` all begin with `voyant_`.
 > Once you have the package installed, you can check what tools are available
-> by typing `voyant_` in the terminal and seeing the options that show with `tab`
-> (assuming you have tab complete).
+> by typing `voyant_` in the terminal and seeing the options that show when
+> you hit the `tab` key (assuming you have tab complete).
 
 The instructions for running each example can be displayed by using the `--help` flag.
 For example, you can see the required and optional command line arguments
