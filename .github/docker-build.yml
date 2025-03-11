@@ -1,0 +1,29 @@
+name: Docker Build
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+  workflow_dispatch:
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name != 'pull_request' || github.event.pull_request.draft != true }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Build Docker image
+        run: docker build -t voyant-sdk-container -f docker/Dockerfile .
+
+      - name: Build project
+        run: |
+          docker run --rm \
+            -v ${{ github.workspace }}:/workspace \
+            --workdir /workspace \
+            voyant-sdk-container \
+            bash -c 'mkdir -p build && cd build && cmake .. && make'
