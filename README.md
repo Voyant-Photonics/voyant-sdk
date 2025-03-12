@@ -105,7 +105,7 @@ sudo apt update
 sudo apt install ./voyant-api*.deb
 ```
 
-> You remove the VOyant packages with:
+> You can remove the Voyant packages with:
 >
 > ```bash
 > sudo apt remove voyant-api voyant-api-dev
@@ -134,8 +134,7 @@ Coming soon...
 
 ## Using the developer API
 
-For using the developer API, you can develop your own `C++` applications that use the Voyant
-static libraries and header files.
+You can develop your own `C++` applications that use the Voyant static libraries and header files.
 
 The best place to start is by testing your ability to build and run the examples contained in this repository.
 
@@ -143,8 +142,10 @@ The best place to start is by testing your ability to build and run the examples
 
 To build the examples:
 
+- From `/workspace/` if building in provided docker container.
+- From `voyant-sdk/` if building on native system.
+
 ```bash
-cd voyant-sdk/
 mkdir -p build
 cd build
 cmake ..
@@ -159,6 +160,17 @@ You can then run the compiled binary example:
 
 ```bash
 ./bin/voyant_client_basic
+```
+
+If you are connected to a stream (simulated or from a device),
+you will see a stream of received messages similar to:
+
+```bash
+###############
+Received frame:
+Header{message type:2, device id:MDL-000, frame idx:35, stamp:1691391379.087802875, proto version:0.0.2, api version:0.0.2, fw version:0.0.2, hdl version:0.0.34}
+Config{ len: 0 }
+Points[24384] {{idx:6238209,ts:163840,pos:[43.984,0.193966,11.0427],v:1.22985,snr:12.3234,refl:0,noise:34.0003,min_snr:-0.00802298,drop reason:1},...}
 ```
 
 ### How to see the headers
