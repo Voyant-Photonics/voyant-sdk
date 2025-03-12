@@ -5,7 +5,7 @@ project(voyant_sdk_examples)
 find_package(voyant-api REQUIRED PATHS /usr/lib/cmake/voyant-api)
 
 # Create executable
-add_executable(voyant_client_basic voyant_client_basic.cpp)
+add_executable(voyant_client_basic voyant_client_basic/voyant_client_basic.cpp)
 
 # Link with the Voyant API
 target_link_libraries(voyant_client_basic PRIVATE voyant-api::voyant-api)
