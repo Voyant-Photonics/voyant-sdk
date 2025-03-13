@@ -182,3 +182,31 @@ Points[24384] {{idx:6238209,ts:163840,pos:[43.984,0.193966,11.0427],v:1.22985,sn
 ### How to see the headers
 
 You can find the header files included in `voyant-api-dev` installed at `/usr/include/voyant_api/`.
+
+## Licensing
+
+This repository contains example code for interacting with Voyant Photonics device drivers.
+
+### License Information
+
+- **Example Code**: All example code in this repository is licensed under the [MIT License](LICENSE).
+You are free to use, modify, distribute, and include this example code in both open source and commercial projects.
+
+- **Device Driver**: The Voyant Photonics device driver itself is proprietary software,
+distributed as a static library in a Debian package with accompanying header files.
+The device driver is **not** covered by the MIT License and is subject to separate licensing terms.
+
+### Using This Code
+
+You are encouraged to:
+
+- Use these examples as starting points for your own applications
+- Modify and adapt the examples to suit your needs
+- Share your improvements with the community
+
+When using the example code, please retain the copyright notices at the top of each file.
+
+### Questions
+
+If you have any questions about licensing or usage of either the examples or the device driver,
+please contact us at Voyant Photonics, Inc.
