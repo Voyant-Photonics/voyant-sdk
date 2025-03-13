@@ -35,7 +35,7 @@ RUN mkdir -p ./debian && \
         wget -P ./debian/ $url; \
     done && \
     apt-get update && \
-    apt install -y ./debian/voyant-api*.deb && \
+    dpkg -i debian/voyant-api*.deb && \
     rm -rf ./debian
 
 CMD ["bash"]
