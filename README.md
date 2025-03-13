@@ -102,7 +102,13 @@ Then install with:
 
 ```bash
 sudo apt update
-sudo apt install ./voyant-api*.deb
+sudo dpkg -i voyant-api*.deb
+```
+
+Any missing dependencies can be added with:
+
+```bash
+sudo apt --fix-broken install
 ```
 
 > You can remove the Voyant packages with:
