@@ -6,6 +6,7 @@ This section covers everything you need to begin working with Voyant LiDAR senso
 
 - [Installation](installation.md) - Detailed instructions for installing Voyant API packages
 - [Quickstart](quickstart.md) - Your first program with a Voyant LiDAR sensor
+- [UDP Connections](connections.md) - Instructions for connecting between Voyant devices and tools.
 <!-- TODO: Add a troubleshooting page
 - [Troubleshooting](troubleshooting.md) - Common issues and their solutions
 -->
