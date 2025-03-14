@@ -41,14 +41,14 @@ int main()
 
   while(!VoyantClient::isTerminated())
   {
-    // Check for new frame (returns nullptr if no new frame)
-    const VoyantFrameWrapper *frame = client.update();
-
-    if(frame)
+    if(client.checkForNewFrame())
     {
+      // Access latest frame as a mutable reference
+      VoyantFrameWrapper &frame = client.getLatestFrame();
+
       std::cout << "###############" << std::endl;
       std::cout << "Received frame:" << std::endl;
-      std::cout << *frame << std::endl;
+      std::cout << frame << std::endl;
     }
 
     // Sleep to avoid busy-waiting
