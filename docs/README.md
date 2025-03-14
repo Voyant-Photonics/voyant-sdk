@@ -160,24 +160,6 @@ make
 
 The built executables will be in the `build/bin` directory.
 
-### Running the Examples
-
-You can then run the compiled binary example:
-
-```bash
-./bin/voyant_client_basic
-```
-
-If you are connected to a stream (simulated or from a device),
-you will see a stream of received messages similar to:
-
-```bash
-###############
-Received frame:
-Header{message type:2, device id:MDL-000, frame idx:35, stamp:1691391379.087802875, proto version:0.0.2, api version:0.0.2, fw version:0.0.2, hdl version:0.0.34}
-Config{ len: 0 }
-Points[24384] {{idx:6238209,ts:163840,pos:[43.984,0.193966,11.0427],v:1.22985,snr:12.3234,refl:0,noise:34.0003,min_snr:-0.00802298,drop reason:1},...}
-```
 
 ### How to see the headers
 

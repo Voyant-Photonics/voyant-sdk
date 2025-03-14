@@ -59,6 +59,8 @@ Sent message 1408 for frame 1 (range: 5.10m)
 
 If properly configured, your basic client will display a stream of received full LiDAR frames:
 
+{% raw %}
+
 ```bash
 ###############
 Received frame:
@@ -66,6 +68,8 @@ Header{message type:2, device id:MDL-000, frame idx:35, stamp:1691391379.0878028
 Config{ len: 0 }
 Points[24384] {{idx:6238209,ts:163840,pos:[43.984,0.193966,11.0427],v:1.22985,snr:12.3234,refl:0,noise:34.0003,min_snr:-0.00802298,drop reason:1},...}
 ```
+
+{% endraw %}
 
 #### Debugging
 
