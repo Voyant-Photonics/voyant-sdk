@@ -1,4 +1,9 @@
-# Installation
+---
+layout: default
+title: Installation
+parent: Getting Started
+nav_order: 1
+---
 
 This guide provides detailed instructions for installing the Voyant API and development packages.
 

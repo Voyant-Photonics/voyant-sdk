@@ -1,4 +1,12 @@
+---
+layout: default
+title: Getting Started
+nav_order: 2
+has_children: true
+---
+<!--
 # Getting Started with Voyant API
+-->
 
 This section covers everything you need to begin working with Voyant LiDAR sensors.
 

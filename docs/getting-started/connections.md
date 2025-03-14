@@ -1,4 +1,9 @@
-# UDP Connections Guide
+---
+layout: default
+title: UDP Connections Guide
+parent: Getting Started
+nav_order: 3
+---
 
 This guide explains how to set up UDP connections between Voyant LiDAR sensors and API tools.
 Voyant sensors and tools communicate using either unicast or multicast UDP connections.

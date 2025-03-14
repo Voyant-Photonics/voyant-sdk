@@ -1,5 +1,8 @@
-# Voyant SDK
-
+---
+layout: default
+title: Voyant SDK
+nav_order: 1
+---
 This repository contains minimal examples for testing the Voyant API with installed Debian packages.
 
 We package two debian packages that are always available at

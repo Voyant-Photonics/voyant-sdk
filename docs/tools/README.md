@@ -1,4 +1,9 @@
-# Voyant Pre-packaged Tools
+---
+layout: default
+title: Voyant Pre-packaged Tools
+nav_order: 3
+has_children: true
+---
 
 The `voyant-api` package includes several command-line tools to help you work with Voyant LiDAR sensors. These tools are installed system-wide (or in the provided docker container)
 and are available in your PATH after installation.

@@ -1,5 +1,9 @@
-# Quickstart Guide
-
+---
+layout: default
+title: Quickstart Guide
+parent: Getting Started
+nav_order: 2
+---
 This guide will help you verify your Voyant API installation by building and running a simple example.
 
 ## Building the Examples
