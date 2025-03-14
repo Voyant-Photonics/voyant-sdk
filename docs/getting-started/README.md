@@ -35,5 +35,5 @@ After installation and verifying your setup with the quickstart guide:
 2. Try out the [examples](../examples/README.md) to understand key concepts
 3. Refer to the [API documentation](../api/README.md) for detailed reference
 
-If you encounter any issues, check the [troubleshooting](troubleshooting.md) page
-or [contact Voyant support](mailto:support@voyantphotonics.com).
+If you encounter any issues, <!-- check the [troubleshooting](troubleshooting.md) page or -->
+[contact Voyant support](mailto:support@voyantphotonics.com).

@@ -1,18 +1,22 @@
 # UDP Connections Guide
 
-This guide explains how to set up UDP connections between Voyant LiDAR sensors and API tools. Voyant sensors and tools communicate using either unicast or multicast UDP connections.
+This guide explains how to set up UDP connections between Voyant LiDAR sensors and API tools.
+Voyant sensors and tools communicate using either unicast or multicast UDP connections.
 
 ## Connection Types
 
 ### Multicast UDP (Recommended for Sensors)
 
-Multicast is the **primary connection method for Voyant sensors**. This allows multiple receivers to simultaneously connect to a single sensor's data stream, which is ideal for development, debugging, and production deployments.
+Multicast is the **primary connection method for Voyant sensors**.
+This allows multiple receivers to simultaneously connect to a single sensor's data stream,
+which is ideal for development, debugging, and production deployments.
 
 > **Note:** Voyant sensors currently only support multicast UDP transmission.
 
 ### Unicast UDP
 
-Unicast is useful for point-to-point connections, especially during development when using mock data streams or when sending data between your own applications.
+Unicast is useful for point-to-point connections,
+especially during development when using mock data streams or when sending data between your own applications.
 
 ## Network Setup for Sensor Connection
 
@@ -34,6 +38,15 @@ Before connecting to a Voyant sensor, you need to configure your network interfa
    ```bash
    ip addr show YOUR_INTERFACE_NAME
    ```
+
+4. **Check connection to device**
+
+By default, Voyant LiDAR devices ship with a static IP of `192.168.1.200`.
+Check that you can reach the sensor with:
+
+```bash
+ping 192.168.1.200
+```
 
 ## Multicast Connection Parameters
 
@@ -209,8 +222,10 @@ nmcli con up "Voyant"
 
 ## Next Steps
 
-After setting up your UDP connection, proceed to:
+Now that you've connected to your sensor:
 
-- [Visualizing Data](visualization.md) - Learn how to visualize your sensor data
-- [Recording Data](recording.md) - Explore options for recording sensor data
-- [Data Processing](processing.md) - Process and analyze your sensor data
+1. Explore the [pre-packaged tools](../tools/README.md) to understand what functionality is available
+2. Try the [example applications](../examples/README.md) to learn how to use the API
+3. Begin developing your own applications with the Voyant API
+
+For more advanced usage, refer to the [API documentation](../api/README.md).
