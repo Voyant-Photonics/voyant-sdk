@@ -9,6 +9,9 @@ and are available in your PATH after installation.
 
 ### Core Tools
 
+<!--
+TODO: Add back with links once we create a apge-per-tool
+
 - **[voyant_hello_world](hello_world.md)** - Simple example application demonstrating basic Voyant API usage
 - **[voyant_points_mock_stream](points_mock_stream.md)** - Generate mock point cloud data for testing and development
 - **[voyant_foxglove_bridge](foxglove_bridge.md)** - Connect Voyant data streams to Foxglove Studio for visualization
@@ -18,6 +21,17 @@ and are available in your PATH after installation.
   - The conversion from Voyant proto messages -> foxglove protobufs is a lossy conversion and cannot be converted back to binary format.
 - **[voyant_playback_check](playback_check.md)** - Playback recorded binary data to verify the integrity
 - **[voyant_playback_foxglove](playback_foxglove.md)** - Replay recorded binary data to Foxglove Studio for visualization and analysis
+-->
+
+- **voyant_hello_world** - Simple example application demonstrating basic Voyant API usage
+- **voyant_points_mock_stream** - Generate mock point cloud data for testing and development
+- **voyant_foxglove_bridge** - Connect Voyant data streams to Foxglove Studio for visualization
+- **voyant_logger_binary** - Record sensor data to a binary format file
+- **voyant_logger_mcap** - Record sensor data to MCAP format for playback directly in Foxglove playback.
+  - This uses foxglove protobuf syntax and is **NOT** directly compatible with ROS/ROS2.
+  - The conversion from Voyant proto messages -> foxglove protobufs is a lossy conversion and cannot be converted back to binary format.
+- **voyant_playback_check** - Playback recorded binary data to verify the integrity
+- **voyant_playback_foxglove** - Replay recorded binary data to Foxglove Studio for visualization and analysis
 
 ## Common Use Cases
 
