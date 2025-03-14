@@ -41,10 +41,10 @@ int main()
 
   while(!VoyantClient::isTerminated())
   {
-    if(client.checkForNewFrame())
+    if(client.tryReceiveNextFrame())
     {
       // Access latest frame as a mutable reference
-      VoyantFrameWrapper &frame = client.getLatestFrame();
+      VoyantFrameWrapper &frame = client.latestFrame();
 
       std::cout << "###############" << std::endl;
       std::cout << "Received frame:" << std::endl;
