@@ -1,1 +1,24 @@
 remote_theme: just-the-docs/just-the-docs
+
+# Site settings
+title: Voyant SDK
+description: Documentation for the Voyant Photonics SDK
+baseurl: "/voyant-sdk" # the subpath of your site
+url: "https://voyant-photonics.github.io" # the base hostname & protocol
+
+# Aux links for the upper right navigation
+aux_links:
+  "Voyant SDK on GitHub":
+    - "https://github.com/Voyant-Photonics/voyant-sdk"
+
+# # Set a path/url to a favicon
+# favicon_ico: "/assets/images/favicon.ico"
+
+# Enable or disable heading anchors
+heading_anchors: true
+
+# Footer content
+footer_content: "Copyright &copy; Voyant Photonics, Inc."
+
+# Color scheme
+color_scheme: light
