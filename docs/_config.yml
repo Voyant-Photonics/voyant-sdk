@@ -22,3 +22,7 @@ footer_content: "Copyright &copy; Voyant Photonics, Inc."
 
 # Color scheme
 color_scheme: light
+
+# Make sure doxygen code docs are not ignored
+include:
+  - api/doxygen
