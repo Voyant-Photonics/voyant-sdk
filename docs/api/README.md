@@ -6,5 +6,5 @@ nav_order: 2
 ---
 
 <div style="position: relative; width: 100%; height: 800px;">
-    <iframe src="api/doxygen/index.html" style="position: absolute; width: 100%; height: 100%; border: none;"></iframe>
+    <iframe src="https://voyant-photonics.github.io/voyant-sdk/api/doxygen/index.html" style="position: absolute; width: 100%; height: 100%; border: none;"></iframe>
 </div>
