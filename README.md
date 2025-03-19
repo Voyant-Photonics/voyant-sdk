@@ -2,32 +2,14 @@
 
 This repository contains minimal examples for testing the Voyant API with installed Debian packages.
 
-We package two debian packages that are always available at
-[voyant-sdk/releases/latest](https://github.com/Voyant-Photonics/voyant-sdk/releases/latest).
+Full documentation for using the Voyant SDK, including this repository are available at:
+[voyant-photonics.github.io](https://voyant-photonics.github.io/).
 
-- `voyant-api`: For binaries, command line utilities, etc.
-- `voyant-api-dev`: Header files, static libraries, etc.
-  - Depends on `voyant-api`
+## Instructions
 
-The `voyant-api` package is all you need to:
-
-- connect to your sensor
-- stream, record, and visualize data
-- configure your sensor (Coming Soon...)
-
-The `voyant-api-dev` package exists for the developer community and enables:
-
-- Building and running the examples contained in this repository
-- Developing your own C++ applications that process Voyant LiDAR data
-
-## Prerequisites
-
-To use the voyant packages, you have two options:
-
-- Run through our provided Docker container (recommended)
-- Install the voyant debian packages on your native system
-  - Requires Ubuntu 22.04
-  - Additional OS support coming soon...
+There are additional installation and usage instructions available at:
+[voyant-photonics.github.io](https://voyant-photonics.github.io/).
+Here we provide a minimal subset of these.
 
 ### Clone this repository
 
@@ -69,81 +51,6 @@ docker run --rm -it --name voyant-sdk-container --network host -v $(pwd):/worksp
 > docker exec -it voyant-sdk-container bash
 > ```
 
-### Native installation
-
-If you wish to install on your native system,
-you will need to install and manage all dependencies.
-
-#### Dependencies
-
-We have a dependency on Cap'n Proto for our message encoding.
-
-Install Cap'n Proto from source following the **Installation: Unix** > **From Release Tarball** instructions
-found at [Cap'n Proto](https://capnproto.org/install.html).
-
-> At the time of writing, these instructions were:
->
-> ```bash
-> curl -O https://capnproto.org/capnproto-c++-1.1.0.tar.gz
-> tar zxf capnproto-c++-1.1.0.tar.gz
-> cd capnproto-c++-1.1.0
-> ./configure
-> make -j6 check
-> sudo make install
-> ```
-
-#### Voyant packages
-
-In a clean directory, download the latest `voyant-api` & `voyant-api-dev` debian packages,
-included in the latest release found at
-[voyant-sdk/releases/latest](https://github.com/Voyant-Photonics/voyant-sdk/releases/latest).
-
-Then install with:
-
-```bash
-sudo apt update
-sudo dpkg -i voyant-api*.deb
-```
-
-Any missing dependencies can be added with:
-
-```bash
-sudo apt --fix-broken install
-```
-
-> You can remove the Voyant packages with:
->
-> ```bash
-> sudo apt remove voyant-api voyant-api-dev
-> ```
-
-## Using the pre-packaged tools
-
-There a number of commandline tools packaged in `voyant-api`.
-
-> Pro tip: The executables packaged in `voyant-api` all begin with `voyant_`.
-> Once you have the package installed, you can check what tools are available
-> by typing `voyant_` in the terminal and seeing the options that show when
-> you hit the `tab` key (assuming you have tab complete).
-
-The instructions for running each example can be displayed by using the `--help` flag.
-For example, you can see the required and optional command line arguments
-for the `voyant_foxglove_bridge` tool with:
-
-```bash
-voyant_foxglove_bridge --help
-```
-
-### Instructions for packaged tools
-
-Coming soon...
-
-## Using the developer API
-
-You can develop your own `C++` applications that use the Voyant static libraries and header files.
-
-The best place to start is by testing your ability to build and run the examples contained in this repository.
-
 ### Building the Examples
 
 To build the examples:
@@ -179,10 +86,6 @@ Config{ len: 0 }
 Points[24384] {{idx:6238209,ts:163840,pos:[43.984,0.193966,11.0427],v:1.22985,snr:12.3234,refl:0,noise:34.0003,min_snr:-0.00802298,drop reason:1},...}
 ```
 
-### How to see the headers
-
-You can find the header files included in `voyant-api-dev` installed at `/usr/include/voyant_api/`.
-
 ## Licensing
 
 This repository contains example code for interacting with Voyant Photonics device drivers.
@@ -209,4 +112,4 @@ When using the example code, please retain the copyright notices at the top of e
 ### Questions
 
 If you have any questions about licensing or usage of either the examples or the device driver,
-please contact us at Voyant Photonics, Inc.
+please see our [troubleshooting guide](https://voyant-photonics.github.io/troubleshooting.html) for support options.
