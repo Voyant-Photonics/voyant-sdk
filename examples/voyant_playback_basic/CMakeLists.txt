@@ -7,7 +7,10 @@ if(NOT TARGET voyant-api::voyant-api)
 endif()
 
 # Create executable
-add_executable(voyant_playback_basic voyant_playback_basic.cpp)
+add_executable(voyant_playback_basic
+  voyant_playback_basic.cpp
+  playback_options.hpp
+)
 
 # Link with the Voyant API
 target_link_libraries(voyant_playback_basic PRIVATE voyant-api::voyant-api)
