@@ -11,5 +11,7 @@ CTestTestfile.cmake
 _deps
 CMakeUserPresets.json
 
-build/
+build*/
 .vscode/
+*.bin
+*.mcap
