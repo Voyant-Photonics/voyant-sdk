@@ -95,7 +95,7 @@ This repository contains example code for interacting with Voyant Photonics devi
 - **Example Code**: All example code in this repository is licensed under the [MIT License](LICENSE).
 You are free to use, modify, distribute, and include this example code in both open source and commercial projects.
 
-- **Device Driver**: The device driver is proprietary (**not** covered my the MIT License), but may be called from your application for the evaluation of Voyant sensors.
+- **Device Driver**: The device driver is proprietary (**not** covered by the MIT License), but may be called from your application for the evaluation of Voyant sensors.
 
 ### Using This Code
 
