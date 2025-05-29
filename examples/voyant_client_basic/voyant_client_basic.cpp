@@ -23,11 +23,11 @@ int main()
   //
   // To connect to an actual sensor, change these parameters accordingly.
   // Example for connecting to a sensor on the network:
-  // VoyantClient client("0.0.0.0:4444", "224.0.0.0", "192.168.1.100");
+  // VoyantClient client("0.0.0.0:4444", "224.0.0.0", "192.168.20.100");
   //  where:
   //  - "0.0.0.0:4444": Binds to all interfaces on port 4444
   //  - "224.0.0.0": Standard multicast group address for the sensor
-  //  - "192.168.1.100": Your network interface's IP address
+  //  - "192.168.20.100": Your network interface's IP address
   VoyantClient client("0.0.0.0:8080", "224.0.0.0", "127.0.0.1");
 
   if(!client.isValid())
