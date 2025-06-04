@@ -27,7 +27,11 @@
         "far": 5000
       },
       "followMode": "follow-pose",
-      "scene": {},
+      "scene": {
+        "transforms": {
+          "visible": false
+        }
+      },
       "transforms": {},
       "topics": {
         "/rng_color_pointcloud": {
@@ -98,7 +102,11 @@
         "far": 5000
       },
       "followMode": "follow-pose",
-      "scene": {},
+      "scene": {
+        "transforms": {
+          "visible": false
+        }
+      },
       "transforms": {},
       "topics": {
         "/point_cloud": {
@@ -177,15 +185,18 @@
         "far": 5000
       },
       "followMode": "follow-pose",
-      "scene": {},
+      "scene": {
+        "transforms": {
+          "visible": false
+        }
+      },
       "transforms": {},
       "topics": {
         "/point_cloud": {
           "visible": true,
           "colorField": "z",
           "colorMode": "flat",
-          "colorMap": "turbo",
-          "flatColor": "#ffffffff"
+          "colorMap": "turbo"
         }
       },
       "layers": {
@@ -249,7 +260,11 @@
         "far": 5000
       },
       "followMode": "follow-pose",
-      "scene": {},
+      "scene": {
+        "transforms": {
+          "visible": false
+        }
+      },
       "transforms": {},
       "topics": {
         "/snr_color_pointcloud": {
