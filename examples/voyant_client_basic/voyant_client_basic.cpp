@@ -17,7 +17,7 @@ int main()
 
   // Create a multicast client (default connection type)
   // These are the standard parameters for local testing in loopback mode:
-  // - "0.0.0.0:8080": Local binding address and port
+  // - "0.0.0.0:4444": Local binding address and port
   // - "224.0.0.0": Multicast group address
   // - "127.0.0.1": Interface address (localhost/loopback)
   //
@@ -28,7 +28,7 @@ int main()
   //  - "0.0.0.0:4444": Binds to all interfaces on port 4444
   //  - "224.0.0.0": Standard multicast group address for the sensor
   //  - "192.168.20.100": Your network interface's IP address
-  VoyantClient client("0.0.0.0:8080", "224.0.0.0", "127.0.0.1");
+  VoyantClient client("0.0.0.0:4444", "224.0.0.0", "127.0.0.1");
 
   if(!client.isValid())
   {
