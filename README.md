@@ -7,7 +7,7 @@ Full documentation for using the Voyant SDK, including this repository, is avail
 
 ## Instructions
 
-Provided below is a minimal set of instructions designed to simplify the installation process and get the respoutory up and running on your system quicky. If needed, additional installation and usage instruction is available at:
+Provided below is a minimal set of instructions designed to simplify the installation process and get the repository up and running on your system quicky. If needed, additional installation and usage instruction is available at:
 [voyant-photonics.github.io](https://voyant-photonics.github.io/).
 
 ### Clone This Repository
