@@ -23,7 +23,7 @@ git clone https://github.com/Voyant-Photonics/voyant-sdk.git
 The recommended approach is to build the examples in our provided docker container,
 which installs all dependencies and provides cross-platform support.
 
-Follow the [Docker - Get started](https://docs.docker.com/get-started/)
+Follow the [Docker - Get started](https://docs.docker.com/engine/install/)
 documentation for installation instruction.
 
 Once the docker container has been installed, build and run the [Voyant SDK docker container](/docker/Dockerfile):
