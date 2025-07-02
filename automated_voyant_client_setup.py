@@ -96,8 +96,8 @@ else:
 logging.info("===-Starting Voyant Client-===\nWould you like to build Docker Container (only required if never built before or if changes have been made since last build)? (y/n): ")
 build_container = input().strip().lower()
 if build_container == 'y':
-    logging.info("Building Docker container. This will most likely take a while. I would recommend a having a really good book on hand.")
-    run_command("docker build -t voyant-sdk-container -f docker/Dockerfile .")
+    logging.info("Building Docker container. This will most likely take a while. I would recommend having a really good book on hand.")
+    run_command("docker build --no-cache -t voyant-sdk-container -f docker/Dockerfile .")
     logging.info("Docker container built successfully.")
 else:
     logging.info("Skipping Docker container build.")
