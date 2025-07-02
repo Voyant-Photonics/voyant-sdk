@@ -7,11 +7,15 @@
 #include <chrono>
 #include <iomanip>
 #include <iostream>
+#include <logging_utils.hpp>
 #include <string>
 #include <voyant_playback.hpp>
 
 int main(int argc, char *argv[])
 {
+  // Initialize API internal logging
+  voyant_log_init_c();
+
   // Parse command line arguments
   PlaybackOptions options = parsePlaybackCommandLine(argc, argv);
 

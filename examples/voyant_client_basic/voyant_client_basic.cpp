@@ -5,11 +5,15 @@
 
 #include <chrono>
 #include <iostream>
+#include <logging_utils.hpp>
 #include <thread>
 #include <voyant_client.hpp>
 
 int main()
 {
+  // Initialize API internal logging
+  voyant_log_init_c();
+
   std::cout << "Starting VoyantClient example..." << std::endl;
 
   // Set up signal handling
