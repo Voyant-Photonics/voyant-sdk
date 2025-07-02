@@ -12,7 +12,8 @@ def run_command(command, capture=False): # Runs a shell command and returns the 
     result = subprocess.run(command, env=env, shell=True, capture_output=capture, text=True)
     if result.returncode != 0:
         raise Exception(f"Command '{command}' failed with error: {result.stderr.strip()}")
-    return result.stdout.strip()
+    if capture:
+        return result.stdout.strip()
 
 def is_device_reachable(ip, port=22, timeout=3):
     try:
@@ -54,7 +55,7 @@ def get_lidar_interface_name(): # Function to get the interface name for lidar w
 
     selected_interface = input("Please enter number to select network interface of LiDAR: ")
 
-    if selected_interface.isdigit() and int(selected_interface) > 0 and int(selected_interface) < len(interface_names):
+    if selected_interface.isdigit() and int(selected_interface) > 0 and int(selected_interface) <= len(interface_names):
         selected_interface = interface_names[int(selected_interface) - 1]
         logging.info(f"Selected network interface: {selected_interface}")
         return selected_interface
