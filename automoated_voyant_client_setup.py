@@ -31,7 +31,7 @@ def ip_exists_on_interface(interface, ip):
         print(f"Failed to get IPs for {interface}: {e.stderr}")
         return False
 
-print("Starting Voyant Client Basic Example.\nBegining automatic setup of network interface for LiDAR...")
+print("Starting Voyant Client Automated Setup.")
 
 # Collect ip address information
 print("Collecting available network interfaces...")
@@ -45,8 +45,12 @@ for addr in ip_addrs:
         interface_name = addr.replace(" ", "").split(":")[1]
         interface_names.append(interface_name)
 print("Available Network Interfaces:")
+ethernet_extensions = ["eth", "eno", "enx"]
 for name in interface_names:
-    print(f"   {interface_names.index(name) + 1}. {name}")
+    if any(ext in name for ext in ethernet_extensions):
+        print(f"   {interface_names.index(name) + 1}. {name} \033[32m<-likely LiDAR\033[0m")
+    else:
+        print(f"   {interface_names.index(name) + 1}. {name}")
 selected_interface = input("Select network interface of LiDAR by number: ")
 
 selected_interface = interface_names[int(selected_interface) - 1]
@@ -70,7 +74,7 @@ else:
 print("Starting Voyant Client...\nWould you like to build Docker Container (only required if never built before or if chages have been made since last build)? (y/n): ")
 build_container = input().strip().lower()
 if build_container == 'y':
-    print("Building Docker container...")
+    print("Building Docker container. This will most likely take a while. Read any goood books?")
     run_command("docker build -t voyant-sdk-container -f docker/Dockerfile .")
     print("Docker container built successfully.")
 else:
