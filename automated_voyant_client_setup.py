@@ -119,3 +119,4 @@ except Exception as e:
         "bash", "-c",
         "docker run --rm -it --name voyant-sdk-container --network host -v $(pwd):/workspace voyant-sdk-container /bin/bash; exec bash"
     ])
+logging.info("Voyant Client setup completed successfully. You can now use the Voyant SDK inside the Docker container. For more information, refer to the documentation at https://voyant-photonics.github.io/.")
