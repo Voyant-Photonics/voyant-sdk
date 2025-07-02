@@ -1,11 +1,15 @@
 import os
 import subprocess
 import socket
+import logging
 
+# Set up terminal envirment and logging
 env = os.environ.copy()
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
-def run_command(command):
-    result = subprocess.run(command, env=env, shell=True, capture_output=True, text=True)
+# Function definitions
+def run_command(command, capture=False): # Runs a shell command and returns the output
+    result = subprocess.run(command, env=env, shell=True, capture_output=capture, text=True)
     if result.returncode != 0:
         raise Exception(f"Command '{command}' failed with error: {result.stderr.strip()}")
     return result.stdout.strip()
@@ -31,56 +35,74 @@ def ip_exists_on_interface(interface, ip):
         print(f"Failed to get IPs for {interface}: {e.stderr}")
         return False
 
-print("Starting Voyant Client Automated Setup.")
+def get_lidar_interface_name(): # Function to get the interface name for lidar with user input
+    # Parse the output to isolate interface names
+    interface_names = []
+    for network_interface in network_interfaces:
+        if network_interface[0].isnumeric():
+            interface_name = network_interface.replace(" ", "").split(":")[1]
+            interface_names.append(interface_name)
 
-# Collect ip address information
-print("Collecting available network interfaces...")
-ip_addrs = run_command('ip addr').split('\n')
+    # Print available network interfaces and prompt user for selection
+    logging.info("===-Available Network Interfaces-===")
+    ethernet_extensions = ["eth", "eno", "enx"]
+    for interface_name in interface_names:
+        if any(ext in interface_name for ext in ethernet_extensions):
+            logging.info(f"   {interface_names.index(interface_name) + 1}. {interface_name} \033[32m<- likely lidar\033[0m")
+        else:
+            logging.info(f"   {interface_names.index(interface_name) + 1}. {interface_name}")
 
-# Parse the output to find interface names
-print("Parsing available network interfaces...")
-interface_names = []
-for addr in ip_addrs:
-    if addr[0].isnumeric():
-        interface_name = addr.replace(" ", "").split(":")[1]
-        interface_names.append(interface_name)
-print("Available Network Interfaces:")
-ethernet_extensions = ["eth", "eno", "enx"]
-for name in interface_names:
-    if any(ext in name for ext in ethernet_extensions):
-        print(f"   {interface_names.index(name) + 1}. {name} \033[32m<-likely LiDAR\033[0m")
+    selected_interface = input("Please enter number to select network interface of LiDAR: ")
+
+    if selected_interface.isdigit() and int(selected_interface) > 0 and int(selected_interface) < len(interface_names):
+        selected_interface = interface_names[int(selected_interface) - 1]
+        logging.info(f"Selected network interface: {selected_interface}")
+        return selected_interface
     else:
-        print(f"   {interface_names.index(name) + 1}. {name}")
-selected_interface = input("Select network interface of LiDAR by number: ")
+        logging.warning("Invalid selection. Please try again.")
+        return get_lidar_interface_name()
 
-selected_interface = interface_names[int(selected_interface) - 1]
-print(f"Selected Interface: {selected_interface}")
-# if not selected_interface.isnumeric() or int(selected_interface) < 1 or int(selected_interface
+# Start the Automated Voyant Client Setup
+logging.info("==========-Starting Voyant Client Automated Setup-==========")
 
+# Collect all network interfaces
+network_interfaces = run_command('ip addr', capture=True).split('\n')
+
+# Check if any network interfaces were found
+if len(network_interfaces) == 0:
+    logging.error("No network interfaces found. Make sure your lidar is connected via ethernet to this device and powered on. Once done, rerun this script. Exiting setup.")
+    exit(1)
+
+selected_interface = get_lidar_interface_name()
+
+# Link up with the selected interface. Skip prosses if the interface is already liked with
 if ip_exists_on_interface(selected_interface, "192.168.20.100/24"):
-    print("Address already assigned to the interface. Skipping IP address assignment.")
+    logging.info("Address already assigned to lidar interface. Skipping IP address assignment.")
 else:
-    print("Assigning IP address")
+    logging.info("Assigning IP address to lidar interface.")
     run_command(f"ip addr add 192.168.20.100/24 dev {selected_interface}")
     run_command(f"ip link set {selected_interface} up")
 
-print(f"Network interface {selected_interface} configured with IP address. Testing connection...")
+# Verify connection
+logging.info(f"Network lidar interface {selected_interface} configured with IP address. Testing connection.")
 if not is_device_reachable("192.168.20.20"):
-    print("Error: LiDAR device is not reachable. Please check the connection and try again.")
+    logging.error("Lidar device is unresponsive. Please check the connection and ensure the device is powered on, then rerun this script. Exiting setup.")
+    exit(1)
 else:
-    print("Connection to LiDAR device established successfully.")
+    logging.info("Connection to lidar device verified successfully.")
 
-
-print("Starting Voyant Client...\nWould you like to build Docker Container (only required if never built before or if chages have been made since last build)? (y/n): ")
+# Build Docker container if needed. Need determined by user input
+logging.info("===-Starting Voyant Client-===\nWould you like to build Docker Container (only required if never built before or if changes have been made since last build)? (y/n): ")
 build_container = input().strip().lower()
 if build_container == 'y':
-    print("Building Docker container. This will most likely take a while. Read any goood books?")
+    logging.info("Building Docker container. This will most likely take a while. I would recommend a having a really good book on hand.")
     run_command("docker build -t voyant-sdk-container -f docker/Dockerfile .")
-    print("Docker container built successfully.")
+    logging.info("Docker container built successfully.")
 else:
-    print("Skipping Docker container build.")
+    logging.info("Skipping Docker container build.")
 
-print("Running Docker container...")
+# Run Docker container
+logging.info("Running Docker container. This will open a new terminal window with the container running. You can now use the Voyant SDK with all of the api controls listed in to documentation (https://voyant-photonics.github.io/) inside the container.")
 try: 
     subprocess.run([
         "gnome-terminal",
@@ -91,7 +113,6 @@ try:
 except Exception as e:
     run_command("docker stop voyant-sdk-container")
     run_command("docker rm voyant-sdk-container")
-    print("Sussy baka")
     subprocess.run([
         "gnome-terminal",
         "--",
