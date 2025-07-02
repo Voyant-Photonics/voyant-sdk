@@ -33,7 +33,7 @@ def ip_exists_on_interface(interface, ip):
         )
         return ip in result.stdout
     except subprocess.CalledProcessError as e:
-        print(f"Failed to get IPs for {interface}: {e.stderr}")
+        logging.error(f"Failed to get IPs for {interface}: {e.stderr}")
         return False
 
 def get_lidar_interface_name(): # Function to get the interface name for lidar with user input
