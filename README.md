@@ -23,8 +23,8 @@ git clone https://github.com/Voyant-Photonics/voyant-sdk.git
 The recommended approach is to build the examples in our provided docker container,
 which installs all dependencies and provides cross-platform support.
 
-Follow the [Docker - Get started](https://docs.docker.com/engine/install/)
-documentation for installation instruction.
+Follow the [Install Docker Engine](https://docs.docker.com/engine/install/)
+documentation for installation instructions. Please be sure to install Docker Engine, and not Docker Desktop; installing the later prevents the api from functioning.
 
 Once the docker container has been installed, build and run the [Voyant SDK docker container](/docker/Dockerfile):
 
@@ -45,6 +45,7 @@ docker run --rm -it --name voyant-sdk-container --network host -v $(pwd):/worksp
 ```
 
 > Execute the following command if you wish to open a second terminal accessing the running docker container:
+>
 > ```bash
 > docker exec -it voyant-sdk-container bash
 > ```
@@ -66,7 +67,7 @@ cmake ..
 make
 ```
 
-The built resulting executables will be created in the `build/bin` directory.
+The built resulting executables will be located in the `build/bin` directory.
 
 ### Running the Examples
 
@@ -99,15 +100,17 @@ You are free to use, modify, distribute, and include this example code in both o
 
 ### Using This Code
 
-Intended applications of this code primarly include:
+You are encouraged to:
 
-- Use of examples as starting points for custom applications
-- Modify and adapt the examples to suit your needs [THIS AND THE POINT ABOVE ARE IDENTICAL, ALBEIT DIFFERENTLY WORDED. CUT ONE AND REPLACE IF REQUIRED]
-- Share your improvements with the community
+- Use these examples as starting points for custom applications
+- Suggest improvements and/or new features. 
+- Share your improvements and applications with the community
 
-**IMPORTANT:** When using the provided example code, retain the copyright notices at the top of each file. Not doing so is a violation of the [MIT License](LICENSE).
+When using the example code, please retain the copyright notices at the top of each file.
 
 ### Questions
 
 If you have any questions or feedback about licensing or usage of either the examples or the device driver,
-please see our [troubleshooting guide](https://voyant-photonics.github.io/troubleshooting.html) for support options. We value your expirence, and are committed to ironing out any errors or unnessesary difficulties in the code. 
+please see our [troubleshooting guide](https://voyant-photonics.github.io/troubleshooting.html) for support options. 
+
+We value your expirence, and are committed to ironing out any errors or unnessesary difficulties in the code. 
