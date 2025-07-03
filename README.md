@@ -7,7 +7,7 @@ Full documentation for using the Voyant SDK, including this repository, is avail
 
 ## Instructions
 
-Provided below is a minimal set of instructions designed to simplify the installation process and get the repository up and running on your system quicky. If needed, additional installation and usage instruction is available at:
+Provided below is a minimal set of instructions designed to simplify the installation process and get the repository up and running on your system quickly. If needed, additional installation and usage instruction is available at:
 [voyant-photonics.github.io](https://voyant-photonics.github.io/).
 
 ### Clone This Repository
@@ -52,7 +52,7 @@ docker run --rm -it --name voyant-sdk-container --network host -v $(pwd):/worksp
 
 ### Building the Examples
 
-Listed below are all instructions relating to builing the provided examples.
+Listed below are all instructions relating to building the provided examples.
 
 ```bash
 cd [INSERT ONE OF THE TWO OPTIONS BELOW]
@@ -103,7 +103,7 @@ You are free to use, modify, distribute, and include this example code in both o
 You are encouraged to:
 
 - Use these examples as starting points for custom applications
-- Suggest improvements and/or new features. 
+- Suggest improvements and/or new features.
 - Share your improvements and applications with the community
 
 When using the example code, please retain the copyright notices at the top of each file.
@@ -111,6 +111,6 @@ When using the example code, please retain the copyright notices at the top of e
 ### Questions
 
 If you have any questions or feedback about licensing or usage of either the examples or the device driver,
-please see our [troubleshooting guide](https://voyant-photonics.github.io/troubleshooting.html) for support options. 
+please see our [troubleshooting guide](https://voyant-photonics.github.io/troubleshooting.html) for support options.
 
-We value your expirence, and are committed to ironing out any errors or unnessesary difficulties in the code. 
+We value your experience, and are committed to ironing out any errors or unnecessary difficulties in the code.

@@ -76,7 +76,7 @@ if len(network_interfaces) == 0:
 
 selected_interface = get_lidar_interface_name()
 
-# Link up with the selected interface. Skip prosses if the interface is already liked with
+# Link up with the selected interface. Skip process if the interface is already liked with
 if ip_exists_on_interface(selected_interface, "192.168.20.100/24"):
     logging.info("Address already assigned to lidar interface. Skipping IP address assignment.")
 else:
@@ -104,7 +104,7 @@ else:
 
 # Run Docker container
 logging.info("Running Docker container. This will open a new terminal window with the container running. You can now use the Voyant SDK with all of the api controls listed in to documentation (https://voyant-photonics.github.io/) inside the container.")
-try: 
+try:
     subprocess.run([
         "gnome-terminal",
         "--",
