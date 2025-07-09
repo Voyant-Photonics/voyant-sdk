@@ -5,6 +5,7 @@ RUN apt-get update && \
     apt-get install -y \
     apt-utils \
     build-essential \
+    python3 \
     cmake \
     curl \
     g++ \
@@ -37,5 +38,6 @@ RUN mkdir -p ./debian && \
     apt-get update && \
     dpkg -i debian/voyant-api*.deb && \
     rm -rf ./debian
+
 
 CMD ["bash"]
