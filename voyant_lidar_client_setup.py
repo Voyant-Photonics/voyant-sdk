@@ -25,8 +25,8 @@ info = {
 
 def update_status():
     status["Docker Container Built"] = util.docker_image_exists(image_name = info['Docker Container Name'])
-    if info['Network Interface'] != 'Not Set' and status["Linked Up"] == True:
-        status['Linked Up'] = util.is_device_reachable(ip=status["Lidar IP Address"],timeout=3)
+    if info['Network Interface'] != 'Not Set':
+        status['Linked Up'] = util.is_device_reachable(ip=info["Lidar IP Address"])
 
 def home():
     update_status()
@@ -82,6 +82,7 @@ def select_lidar_interface_and_link():
         select_lidar_interface_and_link()
     elif choice == 'Link-Up With Lidar':
         link_up()
+        select_lidar_interface_and_link()
     elif choice == 'Back':
         home()
 
@@ -107,12 +108,19 @@ def get_network_interface():
         elif interface_name == "Back":
             return None
         else:
-            return interface_name
+            return interface_name.strip()
 
 def link_up():
     if not util.ip_exists_on_interface(info['Network Interface'], "192.168.20.100/24"):
         util.run_command(f"ip addr add 192.168.20.100/24 dev {info['Network Interface']}")
     util.run_command(f"ip link set {info['Network Interface']} up")
+
+# def link_up():
+#     util.run_command(f"ip link set {info['Network Interface']} up")
+#     util.run_command(f"ip addr flush dev {info['Network Interface']}")  # Optional, to avoid duplicates
+#     util.run_command(f"ip addr add 192.168.20.100/24 dev {info['Network Interface']}")
+#     result = util.run_command(f"ip addr show {info['Network Interface']}")
+#     print(result)
 
 def run_voyant_client():
     update_status()
@@ -147,6 +155,3 @@ def run_voyant_client():
         home()
 
 home()  # Start the setup process
-
-
-home()

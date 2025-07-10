@@ -6,6 +6,7 @@ import os
 import signal
 import socket
 import subprocess
+import platform
 
 
 # Related third-party imports
@@ -228,36 +229,35 @@ def clear_terminal():
     else:
         _ = os.system('clear')
 
-def is_device_reachable(ip, port=22, timeout=3):
-    try:
-        with socket.create_connection((ip, port), timeout=timeout):
-            return True
-    except OSError:
-        return False
-
-def is_device_reachable(ip:str, port:int=22, timeout:float=3) -> bool:
+def is_device_reachable(ip: str, count: int = 1, timeout: int = 2) -> bool:
     """
-    Checks if a device at the given IP and port is reachable via TCP.
+    Pings a target IP to check if it is reachable.
 
     Parameters
     ----------
     ip : str
-        The IP address of the device to check.
-    port : int, optional
-        The port to attempt to connect to. Defaults to 22.
-    timeout : float, optional
-        Timeout in seconds for the connection attempt. Defaults to 3.
+        The IP address to ping.
+    count : int
+        Number of echo requests to send.
+    timeout : int
+        Timeout in seconds.
 
     Returns
     -------
     bool
-        True if the device is reachable, False otherwise.
+        True if ping succeeds, False otherwise.
     """
+    system = platform.system()
+    if system == "Windows":
+        cmd = ["ping", "-n", str(count), "-w", str(timeout * 1000), ip]
+    else:
+        cmd = ["ping", "-c", str(count), "-W", str(timeout), ip]
+
     try:
-        with socket.create_connection((ip, port), timeout=timeout):
-            return True
-    except OSError as e:
-        logging.debug(f"Device at {ip}:{port} not reachable: {e}")
+        result = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        return result.returncode == 0
+    except Exception as e:
+        print(f"Error running ping: {e}")
         return False
 
 def ip_exists_on_interface(interface:str, ip:str) -> bool:
@@ -288,8 +288,6 @@ def ip_exists_on_interface(interface:str, ip:str) -> bool:
     except subprocess.CalledProcessError as e:
         logging.error(f"Failed to get IPs for {interface}: {e.stderr}")
         return False
-
-import subprocess
 
 def docker_image_exists(image_name: str) -> bool:
     """
