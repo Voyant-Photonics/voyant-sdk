@@ -76,7 +76,7 @@ def home():
         start_stop_recording()
         home()
     elif choice == 'Configure Lidar':
-        print('Lidar Config')
+        home()
     elif choice == 'Quit':
         logging.info("Quitting Voyant Client Setup.")
         exit(0)
