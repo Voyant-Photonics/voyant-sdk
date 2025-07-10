@@ -6,8 +6,6 @@ import os
 import signal
 import socket
 import subprocess
-import time
-import random
 
 
 # Related third-party imports
@@ -92,14 +90,14 @@ def render_menu(options:list, prompt="Please select an option", clear=False, tit
     options : list
         A list of options. A python list containing the options (unnumbered) as strings or as lists. If the option is a list, all indexes of the list will be combined into one string separated by spaces and displayed in a single line as that option. However, only the first index of the list will be returned if that option is selected. Can be useful if you want to add status to certain options. Will list the options in the order stored in this list.
     prompt : string, optional
-        If set, will dictate the prompt at the end of the menu. If let unset, defaults to 'Please select and option". Colon and end-space will be added if not provided.
+        If set, will dictate the prompt at the end of the menu. If let unset, defaults to 'Please select an option". Colon and end-space will be added if not provided.
     clear : boolean, optional
         If set to True, the function will clear the terminal before rendering the menu. Defaults to False.
     title : string, optional
         If set, this string will be displayed as the title of the menu at the top of the rendering. If not set, not title will be rendered.
-    note : string, optional
-        If set, this string will be displayed below the title (if present) and before the list of options. If a list of strings, each string will be printed on it's own line. Useful for providing any need context. Will be printed after 'Note: '.
-    warning : string, optional
+    note : string | list, optional
+        If set, this string will be displayed below the title (if present) and before the list of options. If a list of strings, each string will be printed on it's own line. Useful for providing any needed context. Will be printed after 'Note: '.
+    warning : string | list, optional
         Like note, but will be printed after 'WARNING: ', which will be in red. Useful for any urgent information you do not want your users to miss. If both note and warning are used, warning(s) will be printed after note(s).
 
     Returns
@@ -144,7 +142,7 @@ def render_menu(options:list, prompt="Please select an option", clear=False, tit
                 display_options[i] = display_options[i][0]
             logging.info(f"    {i + 1}. {option}")
         if invalid_selection:
-            logging.warning("\033[31mInvalid selection:\033[0m please try again.")
+            logging.info("\033[31mInvalid selection:\033[0m please try again.")
         prompt = prompt.strip()
         if prompt[-1] != ":":
             prompt += ":"
