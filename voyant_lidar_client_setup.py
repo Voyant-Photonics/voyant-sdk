@@ -1,10 +1,5 @@
 # Standard library imports
-import sys
-import argparse
 import logging
-import os
-import signal
-import socket
 import subprocess
 
 # Related third-party imports
@@ -36,7 +31,7 @@ def home():
         ['Run Voyant Lidar Client', ('| \033[31mRequired\033[0m - Build Docker Container' if status['Docker Container Built'] == False else ''), ('| \033[31mRequired\033[0m - Select Lidar Network Interface & Link Up' if status['Linked Up'] == False else '')],
         'Misc Config Settings',
         'Quit'
-    ]
+        ]
     util.render_info(info=info, clear=True, title='Setup Information and Status')
     util.render_info(info=status,colorize=True)
     choice = util.render_menu(options=options, title="Voyant Lidar Client Setup Home", note="Welcome to the Voyant Lidar Client automated Setup script!")
@@ -46,6 +41,8 @@ def home():
         select_lidar_interface_and_link()
     elif choice == 'Run Voyant Lidar Client':
         run_voyant_client()
+    elif choice == 'Misc Config Settings':
+        print("Open Config")
     elif choice == 'Quit':
         logging.info("Quitting Voyant Client Setup.")
         exit(0)
@@ -115,13 +112,6 @@ def link_up():
         util.run_command(f"ip addr add 192.168.20.100/24 dev {info['Network Interface']}")
     util.run_command(f"ip link set {info['Network Interface']} up")
 
-# def link_up():
-#     util.run_command(f"ip link set {info['Network Interface']} up")
-#     util.run_command(f"ip addr flush dev {info['Network Interface']}")  # Optional, to avoid duplicates
-#     util.run_command(f"ip addr add 192.168.20.100/24 dev {info['Network Interface']}")
-#     result = util.run_command(f"ip addr show {info['Network Interface']}")
-#     print(result)
-
 def run_voyant_client():
     update_status()
     options=[
@@ -138,7 +128,7 @@ def run_voyant_client():
                 "gnome-terminal",
                 "--",
                 "bash", "-c",
-                f"docker run --rm -it --name voyant-sdk-container --network host -v $(pwd):/workspace voyant-sdk-container bash"
+                f"docker run --rm -it --name voyant-sdk-container --network host -v $(pwd):/workspace voyant-sdk-container bash -c 'python3 /home/hugo/Workspaces/VSCode/voyant-sdk/voyant_lidar_client.py --lidar-network-interface {info['Network Interface']}; exec bash'"
                 ])
         except Exception as e:
             util.run_command("docker stop voyant-sdk-container")
@@ -147,7 +137,7 @@ def run_voyant_client():
                 "gnome-terminal",
                 "--",
                 "bash", "-c",
-                f"docker run --rm -it --name voyant-sdk-container --network host -v $(pwd):/workspace voyant-sdk-container bash"
+                f"docker run --rm -it --name voyant-sdk-container --network host -v $(pwd):/workspace voyant-sdk-container bash -c 'python3 /home/hugo/Workspaces/VSCode/voyant-sdk/voyant_lidar_client.py --lidar-network-interface {info['Network Interface']}; exec bash'"
                 ])
         logging.info("Voyant Client setup completed successfully. You can now use the Voyant SDK inside the Docker container. For more information, refer to the documentation at https://voyant-photonics.github.io/. Thank you for using the Voyant Client Setup Script, exiting.")
         exit(0)

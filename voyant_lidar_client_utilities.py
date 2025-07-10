@@ -7,6 +7,7 @@ import signal
 import socket
 import subprocess
 import platform
+import re
 
 
 # Related third-party imports
@@ -79,6 +80,26 @@ def run_command(command:str|list, capture=False, timeout:int|float|None=None, li
     except Exception as e:
         logging.error(f"Exception running command '{command}': {e}")
         raise
+
+def run_command_as_subprosses(command:str|list):
+    process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    return process
+
+def stop_subprosses(process):
+    process.send_signal(signal.SIGINT)
+    try:
+        process.wait(timeout=0.5)
+    except subprocess.TimeoutExpired:
+        process.kill()
+
+def is_process_running(process):
+    """
+    Check if the subprocess is still running.
+
+    :param process: subprocess.Popen object
+    :return: True if running, False otherwise
+    """
+    return process.poll() is None
 
 def render_menu(options:list, prompt="Please select an option", clear=False, title:str|None=None, note:str|list|None=None, warning:str|list|None=None) -> str:
     """
@@ -292,6 +313,11 @@ def ip_exists_on_interface(interface:str, ip:str) -> bool:
 def docker_image_exists(image_name: str) -> bool:
     """
     Returns True if a Docker image with the given name (optionally with tag) exists locally.
+
+    Parameters
+    ----------
+    image_name : string
+        The name of the Docker Container image you want to check the existence of.
     """
     try:
         result = subprocess.run(
@@ -308,3 +334,18 @@ def docker_image_exists(image_name: str) -> bool:
             return image_name in images
     except subprocess.CalledProcessError:
         return False
+
+def is_device_streaming(device_ip: str, network_interface: str) -> bool:
+    """
+    Returns True if a device is streaming data to this device.
+
+    Parameters
+    ----------
+    device_ip : string
+        The IP of the device you want to check is streaming.
+    network_interface : string
+        The network interface name of the device you want to check is streaming.
+    """
+    output = run_command(f"sudo timeout 5 tcpdump -i {network_interface} -c 1 src {device_ip}")
+    pattern = rf"IP {re.escape(device_ip)}\.\d+ >"
+    return re.search(pattern, output) is not None
