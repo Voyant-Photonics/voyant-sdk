@@ -4,6 +4,7 @@ FROM ubuntu:latest
 RUN apt-get update && \
     apt-get install -y \
     apt-utils \
+    tcpdump \
     build-essential \
     python3 \
     cmake \

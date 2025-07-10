@@ -8,6 +8,7 @@ import socket
 import subprocess
 import platform
 import re
+import shutil
 
 
 # Related third-party imports
@@ -335,17 +336,59 @@ def docker_image_exists(image_name: str) -> bool:
     except subprocess.CalledProcessError:
         return False
 
+# def is_device_streaming(device_ip: str, network_interface: str) -> bool:
+#     """
+#     Returns True if a device is streaming data to this device.
+
+#     Parameters
+#     ----------
+#     device_ip : string
+#         The IP of the device you want to check is streaming.
+#     network_interface : string
+#         The network interface name of the device you want to check is streaming.
+#     """
+#     try:
+#         output = run_command(f"timeout 5 tcpdump -i {network_interface} -c 1 src {device_ip}")
+#         pattern = rf"IP {re.escape(device_ip)}\.\d+ >"
+#         return re.search(pattern, output) is not None
+#     except:
+#         return False
+
 def is_device_streaming(device_ip: str, network_interface: str) -> bool:
     """
-    Returns True if a device is streaming data to this device.
+    Returns True if a device is streaming data to this device via Ethernet.
 
     Parameters
     ----------
-    device_ip : string
-        The IP of the device you want to check is streaming.
-    network_interface : string
+    device_ip : str
+        The IP address of the device you want to check is streaming.
+    network_interface : str
         The network interface name of the device you want to check is streaming.
     """
-    output = run_command(f"sudo timeout 5 tcpdump -i {network_interface} -c 1 src {device_ip}")
-    pattern = rf"IP {re.escape(device_ip)}\.\d+ >"
-    return re.search(pattern, output) is not None
+    # Check if tcpdump is installed
+    if shutil.which("tcpdump") is None:
+        print("⚠️ tcpdump is not installed.")
+        return False
+
+    try:
+        # Run tcpdump command to check if the device is streaming
+        output = run_command(f"timeout 10 tcpdump -i {network_interface} -c 1 src {device_ip}")
+
+        # Check if tcpdump captured any packets from the device IP
+        # Adjusting the regex pattern to capture IP traffic properly
+        pattern = rf"IP {re.escape(device_ip)}\.\d+\s>"
+
+        # If the pattern is found in the tcpdump output, the device is streaming
+        if re.search(pattern, output):
+            print(f"✅ Device {device_ip} is streaming data.")
+            return True
+        else:
+            print(f"❌ No data captured from {device_ip}.")
+            return False
+
+    except subprocess.CalledProcessError as e:
+        print(f"Error running command: {e}")
+        return False
+    except Exception as e:
+        print(f"Unexpected error: {e}")
+        return False
