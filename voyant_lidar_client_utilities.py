@@ -1,10 +1,6 @@
-# Standard library imports
-import sys
-import argparse
 import logging
 import os
 import signal
-import socket
 import subprocess
 import platform
 import re
@@ -336,24 +332,6 @@ def docker_image_exists(image_name: str) -> bool:
     except subprocess.CalledProcessError:
         return False
 
-# def is_device_streaming(device_ip: str, network_interface: str) -> bool:
-#     """
-#     Returns True if a device is streaming data to this device.
-
-#     Parameters
-#     ----------
-#     device_ip : string
-#         The IP of the device you want to check is streaming.
-#     network_interface : string
-#         The network interface name of the device you want to check is streaming.
-#     """
-#     try:
-#         output = run_command(f"timeout 5 tcpdump -i {network_interface} -c 1 src {device_ip}")
-#         pattern = rf"IP {re.escape(device_ip)}\.\d+ >"
-#         return re.search(pattern, output) is not None
-#     except:
-#         return False
-
 def is_device_streaming(device_ip: str, network_interface: str) -> bool:
     """
     Returns True if a device is streaming data to this device via Ethernet.
@@ -392,3 +370,27 @@ def is_device_streaming(device_ip: str, network_interface: str) -> bool:
     except Exception as e:
         print(f"Unexpected error: {e}")
         return False
+
+def get_files_from_directory(directory_path:str, file_extension:str|None=None):
+    """
+    Retrieves the names of all files with a specified extension in a given directory.
+
+    Parameters
+    ----------
+    directory_path : string
+        The path to the directory to search.
+    file_extension: string, optional
+        The desired file extension (e.g., '.txt', '.py').
+
+    Returns:
+        list: A list containing the names of the matching files.
+    """
+    matching_files = []
+    for filename in os.listdir(directory_path):
+        if file_extension != None:
+            if os.path.isfile(os.path.join(directory_path, filename)) and filename.endswith(file_extension):
+                matching_files.append(filename)
+        else:
+            if os.path.isfile(os.path.join(directory_path, filename)):
+                matching_files.append(filename)
+    return matching_files

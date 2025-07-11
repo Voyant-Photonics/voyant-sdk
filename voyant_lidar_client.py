@@ -1,33 +1,28 @@
-# Standard library imports
 import sys
 import argparse
 import logging
-import os
 import signal
-import socket
-import subprocess
-
-# Related third-party imports
-
-# Local application/library specific imports
 import voyant_lidar_client_utilities as util
+from datetime import datetime
 
 parser = argparse.ArgumentParser(description="Runs as wrapper of Voyant API")
-
 parser.add_argument('--lidar-network-interface', required=True, help='The network interface of the lidar.')
-
 args = parser.parse_args()
+
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 status = {
     'Lidar On': False,
     'Streaming To Foxglove': False,
-    'Recording to Binary': False
+    'Recording to Binary': False,
+    'Playing Recording': False
 }
 info = {
     'Lidar IP Address': '192.168.20.20',
     'Lidar Network Interface': args.lidar_network_interface,
     'Streaming Subprosses': 'Not Created',
-    'Recording Subprosses': 'Not Created'
+    'Recording Subprosses': 'Not Created',
+    'Playback Subprosses': 'Not Created'
 }
 
 def cleanup():
@@ -54,15 +49,18 @@ def update_status(full_check=False):
         status['Streaming To Foxglove'] = util.is_process_running(info['Streaming Subprosses'])
     if info['Recording Subprosses'] != 'Not Created':
         status['Recording to Binary'] = util.is_process_running(info['Recording Subprosses'])
+    if info['Playback Subprosses'] != 'Not Created':
+        status['Playing Recording'] = util.is_process_running(info['Recording Subprosses'])
+
 
 def home():
-    # update_status()
+    update_status()
     options = [
         (['Stop Lidar', ('| \033[31mStreaming\033[0m - will stop streaming if selected.' if status['Streaming To Foxglove'] else ''), ('| \033[31mRecording\033[0m - will stop recording if selected.' if status['Recording to Binary'] else '')] if status['Lidar On'] else 'Start Lidar'),
-        (['Stop Streaming to Foxglove', ('| \033[31mRecording\033[0m - will stop recording if selected.' if status['Recording to Binary'] else '')] if status['Streaming To Foxglove'] else ['Start Streaming to Foxglove', ('| \033[31mLidar Not On\033[0m - will turn on lidar if selected.' if status['Lidar On'] == False else 'Start Streaming to Foxglove')]),
-        ('Stop Recording to Binary' if status['Recording to Binary'] else ['Start Recording to Binary', ('' if status['Streaming To Foxglove'] else '| \033[31mLidar Not On\033[0m - will turn on lidar if selected.'), ('' if status['Streaming To Foxglove'] else '| \033[31mNot Streaming\033[0m - will start streaming if selected.')]),
+        (['Stop Streaming to Foxglove', ('| \033[31mRecording\033[0m - will stop recording if selected.' if status['Recording to Binary'] else '')] if status['Streaming To Foxglove'] else ['Start Streaming to Foxglove', ('| \033[31mLidar Off\033[0m - will turn on lidar if selected.' if status['Lidar On'] == False else 'Start Streaming to Foxglove'), ('| \033[31mPlaying Recording.\033[0m Will stop playback if selected.' if status['Playing Recording'] else '')]),
+        ('Stop Recording to Binary' if status['Recording to Binary'] else ['Start Recording to Binary', ('' if status['Streaming To Foxglove'] else '| \033[31mLidar Off\033[0m - will turn on lidar if selected.'), ('' if status['Streaming To Foxglove'] else '| \033[31mNot Streaming\033[0m - will start streaming if selected.'), ('| \033[31mPlaying Recording.\033[0m Will stop playback if selected.' if status['Playing Recording'] else '')]),
+        ('Stop Recording Playback' if status['Playing Recording'] else ['Select Recording to Playback', ('| \033[31mStreaming .\033[0m Will stop streaming if selected.' if status['Streaming To Foxglove'] else ''), ('| \033[31mRecording.\033[0m Will stop recording if selected.' if status['Recording to Binary'] else '')]),
         'Update Status',
-        'Configure Lidar',
         'Quit'
         ]
     util.render_info(info=info, clear=True, title='Lidar Information and Status')
@@ -77,13 +75,15 @@ def home():
     elif choice == ('Stop Recording to Binary' if status['Recording to Binary'] else 'Start Recording to Binary'):
         start_stop_recording()
         home()
+    elif choice == 'Playback Recordings':
+        start_stop_playback()
+        home()
     elif choice == 'Update Status':
         update_status(full_check=True)
         home()
-    elif choice == 'Configure Lidar':
-        home()
     elif choice == 'Quit':
         logging.info("Quitting Voyant Client Setup.")
+        cleanup()
         exit(0)
 
 def start_stop_lidar():
@@ -107,9 +107,7 @@ def start_stop_streaming():
     update_status()
     if status['Streaming To Foxglove']:
         if status['Recording to Binary']:
-            util.stop_subprosses(info['Recording Subprosses'])
-            info['Recording Subprosses'] = 'Not Created'
-            status['Recording to Binary'] = False
+            start_stop_recording()
         util.stop_subprosses(info['Streaming Subprosses'])
         info['Streaming Subprosses'] = 'Not Created'
         status['Streaming To Foxglove'] = False
@@ -117,6 +115,8 @@ def start_stop_streaming():
     else:
         if status['Lidar On'] == False:
             start_stop_lidar()
+        if status['Playing Recording']:
+            start_stop_playback()
         info['Streaming Subprosses'] = util.run_command_as_subprosses([
         "voyant_foxglove_bridge",
         "--bind-addr", "0.0.0.0:4444",
@@ -134,21 +134,52 @@ def start_stop_recording():
     else:
         if status['Lidar On'] == False:
             start_stop_lidar()
+        if status['Playing Recording']:
+            start_stop_playback()
         if status['Streaming To Foxglove'] == False:
-            info['Streaming Subprosses'] = util.run_command_as_subprosses([
-            "voyant_foxglove_bridge",
-            "--bind-addr", "0.0.0.0:4444",
-            "--group-addr", "224.0.0.0",
-            "--interface-addr", "192.168.20.100"
-        ])
-            status['Streaming To Foxglove'] = True
+            start_stop_streaming()
+        file_name = f'lidar_recording_{datetime.now().strftime("%Y%m%d-%H%M%S")}'
         info['Streaming Subprosses'] = util.run_command_as_subprosses([
         "voyant_logger_binary",
-        "--output", "my_first_recording.bin",
+        "--output", f"{file_name.strip()}.bin",
         "--bind-addr", "0.0.0.0:4444",
         "--group-addr", "224.0.0.0",
         "--interface-addr", "192.168.20.100"
     ])
         status['Recording to Binary'] = True
 
-home()
+def start_stop_playback():
+    update_status()
+    if status['Playing Recording']:
+        util.stop_subprosses(info['Playback Subprosses'])
+        status['Playing Recording'] = False
+    else:
+        if status['Recording to Binary']:
+            start_stop_recording()
+            status['Recording to Binary'] = False
+        if status['Streaming To Foxglove']:
+            start_stop_streaming()
+            status['Streaming To Foxglove'] = False
+        options = util.get_files_from_directory(directory_path='/workspace/recordings', file_extension='.bin')
+        options.append('Back')
+        choice = util.render_menu(options=options, prompt='Please select a recording to playback', clear=True, title='Lidar Recording Playback Menu', note='Once selected, the recording will begin to playback to foxglove in a loop')
+        if choice == 'Back':
+            home()
+        else:
+            info['Streaming Subprosses'] = util.run_command_as_subprosses([
+            "voyant_playback_foxglove",
+            "--input", choice,
+            "--loopback"
+        ])
+            status['Playing Recording'] = True
+    home()
+
+
+
+
+
+try:
+    home()
+except Exception as e:
+    cleanup()
+    raise
