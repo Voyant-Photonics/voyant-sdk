@@ -6,11 +6,6 @@ import platform
 import re
 import shutil
 
-
-# Related third-party imports
-
-# Local application/library specific imports
-
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 def run_command(command:str|list, capture=False, timeout:int|float|None=None, live_output=False) -> str|None:

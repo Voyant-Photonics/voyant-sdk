@@ -7,6 +7,8 @@ from datetime import datetime
 
 parser = argparse.ArgumentParser(description="Runs as wrapper of Voyant API")
 parser.add_argument('--lidar-network-interface', required=True, help='The network interface of the lidar.')
+parser.add_argument('--container-name', required=True, help='Name of the Docker Container made by the setup script.')
+parser.add_argument('--lidar-ip-addr', required=True, help='The IP address of the lidar')
 args = parser.parse_args()
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -18,8 +20,9 @@ status = {
     'Playing Recording': False
 }
 info = {
-    'Lidar IP Address': '192.168.20.20',
+    'Lidar IP Address': args.lidar_ip_addr,
     'Lidar Network Interface': args.lidar_network_interface,
+    'Container Name': args.container_name,
     'Streaming Subprosses': 'Not Created',
     'Recording Subprosses': 'Not Created',
     'Playback Subprosses': 'Not Created'
@@ -60,12 +63,17 @@ def home():
         (['Stop Streaming to Foxglove', ('| \033[31mRecording\033[0m - will stop recording if selected.' if status['Recording to Binary'] else '')] if status['Streaming To Foxglove'] else ['Start Streaming to Foxglove', ('| \033[31mLidar Off\033[0m - will turn on lidar if selected.' if status['Lidar On'] == False else 'Start Streaming to Foxglove'), ('| \033[31mPlaying Recording.\033[0m Will stop playback if selected.' if status['Playing Recording'] else '')]),
         ('Stop Recording to Binary' if status['Recording to Binary'] else ['Start Recording to Binary', ('' if status['Streaming To Foxglove'] else '| \033[31mLidar Off\033[0m - will turn on lidar if selected.'), ('' if status['Streaming To Foxglove'] else '| \033[31mNot Streaming\033[0m - will start streaming if selected.'), ('| \033[31mPlaying Recording.\033[0m Will stop playback if selected.' if status['Playing Recording'] else '')]),
         ('Stop Recording Playback' if status['Playing Recording'] else ['Select Recording to Playback', ('| \033[31mStreaming .\033[0m Will stop streaming if selected.' if status['Streaming To Foxglove'] else ''), ('| \033[31mRecording.\033[0m Will stop recording if selected.' if status['Recording to Binary'] else '')]),
+        'Steaming Options',
+        'Power Options',
+        'Recording Options',
+        'Playback Options',
+        'Data Conversion and Utility Tools',
         'Update Status',
         'Quit'
-        ]
+    ]
     util.render_info(info=info, clear=True, title='Lidar Information and Status')
     util.render_info(info=status,colorize=True)
-    choice = util.render_menu(options=options, title="Voyant Lidar Client Home", note="Welcome to the Voyant Lidar Client!")
+    choice = util.render_menu(options=options, title="Voyant Lidar Client Home", note="Welcome to the Voyant Lidar Client! The options below are quickactions")
     if choice == ('Stop Lidar' if status['Lidar On'] else 'Start Lidar'):
         start_stop_lidar()
         home()
@@ -173,10 +181,6 @@ def start_stop_playback():
         ])
             status['Playing Recording'] = True
     home()
-
-
-
-
 
 try:
     home()

@@ -1,0 +1,6 @@
+{
+  "Docker Container Name": "voyant-sdk-container",
+  "Network Interface": "Not Set",
+  "Lidar IP Address": "192.168.20.20",
+  "Config File": "voyant_client_setup_config.json"
+}
