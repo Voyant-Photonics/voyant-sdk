@@ -167,7 +167,7 @@ def config():
         config()
     elif choice == 'Save Settings to Current Config File':
         with open(f'setup_client_configs/{info["Config File"]}', 'w') as file:
-            json.dump(info, f, indent=4)
+            json.dump(info, file, indent=4)
             file.close()
         config()
     elif choice == 'Save Settings to New Config File':
@@ -176,7 +176,7 @@ def config():
             new_file += '.json'
         info['Config File'] = new_file
         with open(f'setup_client_configs/{new_file}', 'w') as file:
-            json.dump(info, f, indent=4)
+            json.dump(info, file, indent=4)
             file.close()
         config()
     elif choice == 'Reset Config File':
@@ -186,7 +186,7 @@ def config():
     'Network Interface': 'Not Set',
     'Lidar IP Address': '192.168.20.20',
     'Config File': info['Config File']
-}, f, indent=4)
+}, file, indent=4)
             file.close()
         info = {
     'Docker Container Name': 'voyant-sdk-container',
@@ -209,7 +209,7 @@ def config():
         else:
             info['Config File'] = file
             with open(f'setup_client_configs/{info["Config File"]}', 'r') as file:
-                info = json.load(f)
+                info = json.load(file)
                 file.close()
             config()
     elif choice =='Set Current Config File to Default':

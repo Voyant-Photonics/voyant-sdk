@@ -80,7 +80,7 @@ def run_command_as_subprosses(command:str|list):
 def stop_subprosses(process):
     process.send_signal(signal.SIGINT)
     try:
-        process.wait(timeout=0.5)
+        process.wait(timeout=1)
     except subprocess.TimeoutExpired:
         process.kill()
 
