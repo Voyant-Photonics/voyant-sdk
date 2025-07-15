@@ -11,8 +11,7 @@ compile_commands.json
 CTestTestfile.cmake
 _deps
 CMakeUserPresets.json
-
-
+data.csv
 build*/
 .vscode/
 *.bin
