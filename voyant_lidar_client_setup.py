@@ -129,14 +129,14 @@ def run_voyant_client():
             "gnome-terminal",
             "--",
             "bash", "-c",
-            f"docker run --rm -it --name voyant-sdk-container --network host -v $(pwd):/workspace voyant-sdk-container bash -c 'python3 /workspace/voyant_lidar_client.py --lidar-network-interface {info['Network Interface']} --container-name {info['Docker Container Name']} --liadr-ip-addr {info['Lidar IP Address']}; exec bash'"
+            f"docker run --rm -it --name voyant-sdk-container --network host -v $(pwd):/workspace voyant-sdk-container bash -c 'python3 /workspace/voyant_lidar_client.py --lidar-network-interface {info['Network Interface']} --container-name {info['Docker Container Name']} --lidar-ip-addr {info['Lidar IP Address']}; exec bash'"
             ])
         except:
             subprocess.run([
             "gnome-terminal",
             "--",
             "bash", "-c",
-            f"docker run --rm -it --name voyant-sdk-container --network host -v $(pwd):/workspace voyant-sdk-container bash -c 'python3 /workspace/voyant_lidar_client.py --lidar-network-interface {info['Network Interface']}; exec bash'"
+            f"docker run --rm -it --name voyant-sdk-container --network host -v $(pwd):/workspace voyant-sdk-container bash -c 'python3 /workspace/voyant_lidar_client.py --lidar-network-interface {info['Network Interface']} --container-name {info['Docker Container Name']} --lidar-ip-addr {info['Lidar IP Address']}; exec bash'"
             ])
         logging.info("Voyant Client setup completed successfully. You can now use the Voyant SDK inside the Docker container. For more information, refer to the documentation at https://voyant-photonics.github.io/. Thank you for using the Voyant Client Setup Script, exiting.")
         # exit(0)
@@ -223,13 +223,13 @@ def config():
 try:
     with open('setup_client_configs/last_config.txt', 'r') as file:
         config_file = file.read()
+        if config_file != '':
+            with open(f'setup_client_configs/{config_file}', 'r') as file:
+                info = json.load(file)
+                file.close()
+            if info['Network Interface'] != 'Not Set':
+                link_up()
         file.close()
-    if config_file != '':
-        with open(f'setup_client_configs/{config_file}', 'r') as file:
-            info = json.load(f)
-            file.close()
-        if info['Network Interface'] != 'Not Set':
-            link_up()
     home()
 except:
     home()  # Start the setup process
