@@ -1,6 +1,6 @@
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v5.0.0
+    rev: v6.0.0
     hooks:
       - id: check-json
       - id: check-toml
@@ -11,22 +11,38 @@ repos:
   - repo: https://github.com/codespell-project/codespell
     rev: v2.4.1
     hooks:
-    - id: codespell
-      args:
-        - "--ignore-words-list=crate"
+      - id: codespell
+        args:
+          - "--ignore-words-list=crate"
 
   - repo: https://github.com/pre-commit/mirrors-clang-format
-    rev: v19.1.7
+    rev: v21.1.2
     hooks:
-    - id: clang-format
+      - id: clang-format
+
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.12.8
+    hooks:
+      - id: ruff-check
+        args: [--fix]
+      - id: ruff-format
 
   - repo: https://github.com/Lucas-C/pre-commit-hooks
     rev: v1.5.5
     hooks:
       - id: insert-license
+        name: "Insert license C++"
         files: \.(cpp|hpp|h)$
         args:
           - --license-filepath
           - license_header.txt
           - --comment-style
           - //
+      - id: insert-license
+        name: "Insert license Python"
+        files: \.py$
+        args:
+          - --license-filepath
+          - license_header.txt
+          - --comment-style
+          - "#"

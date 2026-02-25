@@ -10,6 +10,9 @@ RUN apt-get update && \
     g++ \
     pkg-config \
     jq \
+    libwayland-dev \
+    python3 \
+    python3-pip \
     wget \
     && rm -rf /var/lib/apt/lists/*
 
@@ -29,13 +32,21 @@ RUN curl -O https://capnproto.org/capnproto-c++-1.1.0.tar.gz && \
 WORKDIR /workspace
 
 # Download and install the latest release packages from GitHub
-RUN mkdir -p ./debian && \
-    LATEST_RELEASE_URL=$(curl -s https://api.github.com/repos/Voyant-Photonics/voyant-sdk/releases/latest | jq -r '.assets[].browser_download_url') && \
-    for url in $LATEST_RELEASE_URL; do \
-        wget -P ./debian/ $url; \
-    done && \
-    apt-get update && \
-    dpkg -i debian/voyant-api*.deb && \
-    rm -rf ./debian
+RUN ARCH=$(dpkg --print-architecture) && \
+    TARBALL_URL=$(curl -s https://api.github.com/repos/Voyant-Photonics/voyant-sdk/releases/latest | \
+        jq -r '.assets[] | select(.name | endswith(".tar.gz")) | .browser_download_url' | head -n 1) && \
+    if [ -z "$TARBALL_URL" ]; then echo "No .tar.gz asset found in latest release" >&2; exit 1; fi && \
+    wget -O /tmp/voyant-api.tar.gz "$TARBALL_URL" && \
+    mkdir -p /tmp/voyant-api-extract && \
+    tar -xzf /tmp/voyant-api.tar.gz -C /tmp/voyant-api-extract && \
+    API_DEB=$(find /tmp/voyant-api-extract -name "voyant-api_*${ARCH}.deb" | head -n 1) && \
+    DEV_DEB=$(find /tmp/voyant-api-extract -name "voyant-api-dev_*${ARCH}.deb" | head -n 1) && \
+    if [ -z "$API_DEB" ] || [ -z "$DEV_DEB" ]; then echo "Required .deb packages for ARCH=$ARCH not found" >&2; exit 1; fi && \
+    apt-get update && apt-get install -y "$API_DEB" "$DEV_DEB" && \
+    apt-get clean && \
+    rm -rf /tmp/voyant-api.tar.gz /tmp/voyant-api-extract /var/lib/apt/lists/*
+
+# Install Python API
+RUN pip3 install voyant-api --break-system-packages
 
 CMD ["bash"]
