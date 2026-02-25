@@ -20,10 +20,18 @@ jobs:
       - name: Build Docker image
         run: docker build -t voyant-sdk-container -f docker/Dockerfile .
 
-      - name: Build project
+      - name: Build C++ examples
         run: |
           docker run --rm \
             -v ${{ github.workspace }}:/workspace \
             --workdir /workspace \
             voyant-sdk-container \
             bash -c 'mkdir -p build && cd build && cmake .. && make'
+
+      - name: Test Python examples
+        run: |
+          docker run --rm \
+            -v ${{ github.workspace }}:/workspace \
+            --workdir /workspace \
+            voyant-sdk-container \
+            bash -c 'python3 python/examples/client_example.py --help'
