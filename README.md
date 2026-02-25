@@ -50,9 +50,9 @@ docker run --rm -it --name voyant-sdk-container --network host -v $(pwd):/worksp
 > docker exec -it voyant-sdk-container bash
 > ```
 
-### Building the Examples
+### Building the C++ Examples
 
-Listed below are all instructions relating to building the provided examples.
+Listed below are all instructions relating to building the provided C++ examples.
 
 ```bash
 cd [INSERT ONE OF THE TWO OPTIONS BELOW]
@@ -69,15 +69,15 @@ make
 
 The built resulting executables will be located in the `build/bin` directory.
 
-### Running the Examples
+### Running the C++ Examples
 
 Run the compiled binary example:
 
 ```bash
-./bin/voyant_client_basic
+./bin/basic_receiver
 ```
 
-If connected to a stream (simulated or from an external device), a feed of received messages similar to the sample below can will be displayed.
+If connected to a stream (simulated or from an external device), a feed of received messages similar to the sample below will be displayed.
 
 ```bash
 ###############
@@ -85,6 +85,20 @@ Received frame:
 Header{message type:2, device id:MDL-000, frame idx:35, stamp:1691391379.087802875, proto version:0.0.2, api version:0.0.2, fw version:0.0.2, hdl version:0.0.34}
 Config{ len: 0 }
 Points[24384] {{idx:6238209,ts:163840,pos:[43.984,0.193966,11.0427],v:1.22985,snr:12.3234,refl:0,noise:34.0003,min_snr:-0.00802298,drop reason:1},...}
+```
+
+### Running the Python Examples
+
+The Python examples require the `voyant-api` package, which is pre-installed in the Docker container. To install it on your native system:
+
+```bash
+pip install voyant-api
+```
+
+Run a Python example:
+
+```bash
+python3 python/examples/client_example.py
 ```
 
 ## Licensing
