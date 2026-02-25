@@ -99,6 +99,11 @@ def main():
                 xyzv = frame.xyzv()
                 print(f"xyzv data:\n{xyzv}\n")
                 print()
+
+                ###############################################
+                # Insert your point cloud processing magic here
+                ###############################################
+
             else:
                 # No frame available
                 pass

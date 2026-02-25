@@ -75,6 +75,10 @@ def main():
         df = frame_to_dataframe(frame)
         print(df)
 
+        ###############################################
+        # Insert your point cloud processing magic here
+        ###############################################
+
 
 if __name__ == "__main__":
     main()

@@ -157,6 +157,13 @@ def main():
         while True:
             frame = client.try_receive_frame()
             if frame is not None:
+                ###############################################
+                # Insert your point cloud processing magic here
+                ###############################################
+
+                # NOTE: Python-based recording may struggle to keep up with high-frequency
+                # data streams. If you experience frame drops, consider using the native
+                # binary recorder for more reliable capture.
                 status = recorder.record_frame(frame)
 
                 if status == RecordStatus.STOP:
