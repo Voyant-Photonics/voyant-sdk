@@ -1,4 +1,9 @@
 #!/usr/bin/env python3
+# Copyright (c) 2024-2025 Voyant Photonics, Inc.
+#
+# This example code is licensed under the MIT License.
+# See the LICENSE file in the repository root for full license text.
+
 """
 Script to process Voyant recording files frame by frame.
 Prints frame information and XYZ point cloud data as numpy arrays.

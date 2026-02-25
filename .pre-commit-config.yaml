@@ -20,13 +20,29 @@ repos:
     hooks:
     - id: clang-format
 
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.12.8
+    hooks:
+      - id: ruff-check
+        args: [--fix]
+      - id: ruff-format
+
   - repo: https://github.com/Lucas-C/pre-commit-hooks
     rev: v1.5.5
     hooks:
       - id: insert-license
+        name: "Insert license C++"
         files: \.(cpp|hpp|h)$
         args:
           - --license-filepath
           - license_header.txt
           - --comment-style
           - //
+      - id: insert-license
+        name: "Insert license Python"
+        files: \.py$
+        args:
+          - --license-filepath
+          - license_header.txt
+          - --comment-style
+          - "#"
