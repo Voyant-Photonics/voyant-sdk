@@ -10,10 +10,10 @@ RUN apt-get update && \
     g++ \
     pkg-config \
     jq \
+    libwayland-dev \
     python3 \
     python3-pip \
-    wget \
-    && rm -rf /var/lib/apt/lists/*
+    wget
 
 # Install Cap'n Proto from source
 WORKDIR /tmp
@@ -36,10 +36,10 @@ RUN ARCH=$(dpkg --print-architecture) && \
         jq -r '.assets[] | select(.name | endswith(".tar.gz")) | .browser_download_url') && \
     wget -O /tmp/voyant-api.tar.gz "$TARBALL_URL" && \
     tar -xzf /tmp/voyant-api.tar.gz -C /tmp && \
-    dpkg -i $(find /tmp -name "voyant-api_*${ARCH}.deb") \
-            $(find /tmp -name "voyant-api-dev_*${ARCH}.deb") || true && \
-    apt-get install -f -y && \
-    rm -rf /tmp/voyant-api*
+    apt-get install -y \
+        $(find /tmp -name "voyant-api_*${ARCH}.deb") \
+        $(find /tmp -name "voyant-api-dev_*${ARCH}.deb") && \
+    rm -rf /tmp/voyant-api* /var/lib/apt/lists/*
 
 # Install Python API
 RUN pip3 install voyant-api --break-system-packages
