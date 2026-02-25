@@ -36,9 +36,9 @@ RUN ARCH=$(dpkg --print-architecture) && \
         jq -r '.assets[] | select(.name | endswith(".tar.gz")) | .browser_download_url') && \
     wget -O /tmp/voyant-api.tar.gz "$TARBALL_URL" && \
     tar -xzf /tmp/voyant-api.tar.gz -C /tmp && \
-    apt-get update && \
-    dpkg -i /tmp/voyant-api-debian-*/voyant-api_*-1_${ARCH}.deb \
-            /tmp/voyant-api-debian-*/voyant-api-dev_*-1_${ARCH}.deb && \
+    dpkg -i $(find /tmp -name "voyant-api_*${ARCH}.deb") \
+            $(find /tmp -name "voyant-api-dev_*${ARCH}.deb") || true && \
+    apt-get install -f -y && \
     rm -rf /tmp/voyant-api*
 
 # Install Python API
