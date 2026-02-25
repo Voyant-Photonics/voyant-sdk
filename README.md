@@ -74,7 +74,7 @@ The built resulting executables will be located in the `build/bin` directory.
 Run the compiled binary example:
 
 ```bash
-./bin/basic_receiver
+./bin/voyant_client_basic
 ```
 
 If connected to a stream (simulated or from an external device), a feed of received messages similar to the sample below will be displayed.

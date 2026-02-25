@@ -123,8 +123,9 @@ def parse_args():
 
 
 def main():
-    init_voyant_logging()
     """Main function to set up client and recorder and run the recording loop."""
+    init_voyant_logging()
+
     args = parse_args()
 
     # 1. Create the client to receive frames from the network

@@ -22,7 +22,9 @@ def parse_args():
     )
 
     # Required argument
-    parser.add_argument("--input", help="Path to the Voyant recording file (.bin)")
+    parser.add_argument(
+        "--input", help="Path to the Voyant recording file (.bin)", required=True
+    )
 
     # Optional arguments with defaults matching the Rust code
     parser.add_argument(

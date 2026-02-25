@@ -8,7 +8,7 @@ import subprocess
 import socket
 import logging
 
-# Set up terminal envirment and logging
+# Set up terminal environment and logging
 env = os.environ.copy()
 logging.basicConfig(
     level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
@@ -144,7 +144,7 @@ else:
 
 # Run Docker container
 logging.info(
-    "Running Docker container. This will open a new terminal window with the container running. You can now use the Voyant SDK with all of the api controls listed in to documentation (https://voyant-photonics.github.io/) inside the container."
+    "Running Docker container. This will open a new terminal window with the container running. You can now use the Voyant SDK with all of the api controls listed in the documentation (https://voyant-photonics.github.io/) inside the container."
 )
 try:
     subprocess.run(
