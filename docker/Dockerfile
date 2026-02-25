@@ -10,6 +10,8 @@ RUN apt-get update && \
     g++ \
     pkg-config \
     jq \
+    python3 \
+    python3-pip \
     wget \
     && rm -rf /var/lib/apt/lists/*
 
@@ -29,13 +31,17 @@ RUN curl -O https://capnproto.org/capnproto-c++-1.1.0.tar.gz && \
 WORKDIR /workspace
 
 # Download and install the latest release packages from GitHub
-RUN mkdir -p ./debian && \
-    LATEST_RELEASE_URL=$(curl -s https://api.github.com/repos/Voyant-Photonics/voyant-sdk/releases/latest | jq -r '.assets[].browser_download_url') && \
-    for url in $LATEST_RELEASE_URL; do \
-        wget -P ./debian/ $url; \
-    done && \
+RUN ARCH=$(dpkg --print-architecture) && \
+    TARBALL_URL=$(curl -s https://api.github.com/repos/Voyant-Photonics/voyant-sdk/releases/latest | \
+        jq -r '.assets[] | select(.name | endswith(".tar.gz")) | .browser_download_url') && \
+    wget -O /tmp/voyant-api.tar.gz "$TARBALL_URL" && \
+    tar -xzf /tmp/voyant-api.tar.gz -C /tmp && \
     apt-get update && \
-    dpkg -i debian/voyant-api*.deb && \
-    rm -rf ./debian
+    dpkg -i /tmp/voyant-api-debian-*/voyant-api_*-1_${ARCH}.deb \
+            /tmp/voyant-api-debian-*/voyant-api-dev_*-1_${ARCH}.deb && \
+    rm -rf /tmp/voyant-api*
+
+# Install Python API
+RUN pip3 install voyant-api --break-system-packages
 
 CMD ["bash"]
