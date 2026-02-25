@@ -1,0 +1,3 @@
+[lint]
+extend-ignore = ["E266"]
+extend-select = ["N"]
