@@ -6,7 +6,7 @@
 
 """
 Script to process Voyant recording files frame by frame.
-Prints frame information and XYZ point cloud data as numpy arrays.
+Prints frame information and XYZ point cloud data as pandas DataFrames.
 """
 
 import argparse
