@@ -45,7 +45,7 @@ def parse_args():
         "--keep-invalid-points",
         action="store_true",
         default=False,
-        help="Whether to filter out invalid points",
+        help="Keep invalid points (disable filtering)",
     )
 
     parser.add_argument(
@@ -91,7 +91,7 @@ def main():
         while True:
             frame = client.try_receive_frame()
 
-            if frame:
+            if frame is not None:
                 frame_count += 1
                 print(f"Frame {frame_count}: {frame}")
 

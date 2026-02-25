@@ -45,7 +45,7 @@ def parse_args():
         "--keep-invalid-points",
         action="store_true",
         default=False,
-        help="Whether to filter out invalid points",
+        help="Keep invalid points (disable filtering)",
     )
 
     return parser.parse_args()
