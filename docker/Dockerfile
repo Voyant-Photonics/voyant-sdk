@@ -13,7 +13,8 @@ RUN apt-get update && \
     libwayland-dev \
     python3 \
     python3-pip \
-    wget
+    wget \
+    && rm -rf /var/lib/apt/lists/*
 
 # Install Cap'n Proto from source
 WORKDIR /tmp
@@ -33,12 +34,14 @@ WORKDIR /workspace
 # Download and install the latest release packages from GitHub
 RUN ARCH=$(dpkg --print-architecture) && \
     TARBALL_URL=$(curl -s https://api.github.com/repos/Voyant-Photonics/voyant-sdk/releases/latest | \
-        jq -r '.assets[] | select(.name | endswith(".tar.gz")) | .browser_download_url') && \
+        jq -r '.assets[] | select(.name | endswith(".tar.gz")) | .browser_download_url' | head -n 1) && \
+    if [ -z "$TARBALL_URL" ]; then echo "No .tar.gz asset found in latest release" >&2; exit 1; fi && \
     wget -O /tmp/voyant-api.tar.gz "$TARBALL_URL" && \
     tar -xzf /tmp/voyant-api.tar.gz -C /tmp && \
-    apt-get install -y \
-        $(find /tmp -name "voyant-api_*${ARCH}.deb") \
-        $(find /tmp -name "voyant-api-dev_*${ARCH}.deb") && \
+    API_DEB=$(find /tmp -name "voyant-api_*${ARCH}.deb" | head -n 1) && \
+    DEV_DEB=$(find /tmp -name "voyant-api-dev_*${ARCH}.deb" | head -n 1) && \
+    if [ -z "$API_DEB" ] || [ -z "$DEV_DEB" ]; then echo "Required .deb packages for ARCH=$ARCH not found" >&2; exit 1; fi && \
+    apt-get install -y "$API_DEB" "$DEV_DEB" && \
     rm -rf /tmp/voyant-api* /var/lib/apt/lists/*
 
 # Install Python API
