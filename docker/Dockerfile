@@ -42,7 +42,7 @@ RUN ARCH=$(dpkg --print-architecture) && \
     API_DEB=$(find /tmp/voyant-api-extract -name "voyant-api_*${ARCH}.deb" | head -n 1) && \
     DEV_DEB=$(find /tmp/voyant-api-extract -name "voyant-api-dev_*${ARCH}.deb" | head -n 1) && \
     if [ -z "$API_DEB" ] || [ -z "$DEV_DEB" ]; then echo "Required .deb packages for ARCH=$ARCH not found" >&2; exit 1; fi && \
-    apt-get install -y "$API_DEB" "$DEV_DEB" && \
+    apt-get update && apt-get install -y "$API_DEB" "$DEV_DEB" && \
     apt-get clean && \
     rm -rf /tmp/voyant-api.tar.gz /tmp/voyant-api-extract /var/lib/apt/lists/*
 
