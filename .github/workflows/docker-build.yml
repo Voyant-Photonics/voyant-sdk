@@ -34,4 +34,7 @@ jobs:
             -v ${{ github.workspace }}:/workspace \
             --workdir /workspace \
             voyant-sdk-container \
-            bash -c 'python3 python/examples/client_example.py --help'
+            bash -c 'python3 python/examples/client_example.py --help && \
+                     python3 python/examples/pcd_conversion_example.py --help && \
+                     python3 python/examples/playback_example.py --help && \
+                     python3 python/examples/recorder_example.py --help'
