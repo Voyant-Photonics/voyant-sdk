@@ -14,7 +14,7 @@ change this, or --min-frame-index / --max-frame-index to convert a specific
 range by sensor frame index.
 
 By default each .pcd file contains the standard 7 fields: x, y, z, radial_vel,
-snr_linear, nanosecs_since_frame, drop_reason. Pass --extended to include all
+snr_linear, nanosecs_since_frame, drop_reason. Pass --extended-format to include all
 11 fields.
 
 Note: Frame indices reflect sensor uptime and do not start from zero
