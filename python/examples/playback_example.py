@@ -12,7 +12,7 @@ Prints frame information and XYZ point cloud data as pandas DataFrames.
 import argparse
 from voyant_api import VoyantPlayback
 from voyant_api import init_voyant_logging
-from voyant_api.utils import frame_to_dataframe
+from voyant_api.pandas_utils import frame_to_dataframe
 
 
 def parse_args():
