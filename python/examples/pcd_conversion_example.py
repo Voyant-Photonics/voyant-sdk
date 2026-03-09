@@ -13,6 +13,10 @@ By default, only the first 100 frames are converted. Use --max-frames to
 change this, or --min-frame-index / --max-frame-index to convert a specific
 range by sensor frame index.
 
+By default each .pcd file contains the standard 7 fields: x, y, z, radial_vel,
+snr_linear, nanosecs_since_frame, drop_reason. Pass --extended to include all
+11 fields.
+
 Note: Frame indices reflect sensor uptime and do not start from zero
 per recording. Use --keep-invalid-points to include invalid points in
 the converted PCD files.
@@ -59,7 +63,7 @@ def parse_args():
         help=(
             "Maximum number of frames to convert. "
             f"Defaults to {DEFAULT_MAX_FRAMES} to avoid accidentally filling disk. "
-            "Pass 0 for no limit."
+            "Pass 0 (or any negative value) for no limit."
         ),
     )
     parser.add_argument(
@@ -83,12 +87,13 @@ def parse_args():
         help="Include invalid points in converted PCD files",
     )
     parser.add_argument(
-        "--base-fields-only",
+        "--extended-format",
         action="store_true",
         default=False,
         help=(
-            "Write only base fields (x, y, z, radial_vel, snr_linear, "
-            "nanosecs_since_frame, drop_reason) instead of all extended fields"
+            "Write all extended fields (adds calibrated_reflectance, "
+            "noise_mean_estimate, min_ramp_snr, point_index) instead of the "
+            "standard 7-field format"
         ),
     )
 
@@ -144,7 +149,7 @@ def main():
                 frame,
                 pcd_path,
                 valid_only=not args.keep_invalid_points,
-                extended=not args.base_fields_only,
+                extended=args.extended_format,
             )
             converted += 1
 
