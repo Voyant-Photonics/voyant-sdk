@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.15)
-project(voyant_client_basic)
+project(voyant_recorder_basic)
 
 # Find the voyant-api package if building this example directly
 if(NOT TARGET voyant-api::voyant-api)

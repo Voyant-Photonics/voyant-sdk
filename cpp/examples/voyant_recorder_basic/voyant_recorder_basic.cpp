@@ -3,12 +3,10 @@
 // This example code is licensed under the MIT License.
 // See the LICENSE file in the repository root for full license text.
 
-// Copyright (c) 2024-2025 Voyant Photonics, Inc.
-// All rights reserved.
-
 #include <chrono>
 #include <iostream>
 #include <logging_utils.hpp>
+#include <optional>
 #include <thread>
 #include <voyant_client.hpp>
 #include <voyant_data_recorder.hpp>
