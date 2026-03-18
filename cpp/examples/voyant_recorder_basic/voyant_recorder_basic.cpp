@@ -5,7 +5,7 @@
 
 #include <chrono>
 #include <iostream>
-#include <logging_utils.hpp>
+#include <logging_utils_ffi.hpp>
 #include <optional>
 #include <thread>
 #include <voyant_client.hpp>

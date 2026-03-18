@@ -3,58 +3,39 @@
 // This example code is licensed under the MIT License.
 // See the LICENSE file in the repository root for full license text.
 
+#include <carbon_client.hpp>
+#include <carbon_config.hpp>
 #include <chrono>
 #include <iostream>
-#include <logging_utils.hpp>
+#include <logging_utils_ffi.hpp>
 #include <thread>
-#include <voyant_client.hpp>
 
 int main()
 {
-  // Initialize API internal logging
   voyant_log_init_c();
+  CarbonClient::setupSignalHandling();
 
-  std::cout << "Starting VoyantClient example..." << std::endl;
+  CarbonConfig config;
+  config.setBindAddr("0.0.0.0:5678").setGroupAddr("224.0.0.0").setInterfaceAddr("127.0.0.1");
+  // Optional: override defaults as needed
+  // config.setRangeMax(50.0f);
+  // config.setPfa(1e-4f);
 
-  // Set up signal handling
-  VoyantClient::setupSignalHandling();
+  CarbonClient client(config);
+  client.start();
 
-  // Create a multicast client (default connection type)
-  // These are the standard parameters for connecting to an actual sensor:
-  // - "0.0.0.0:4444": Binds to all interfaces on port 4444
-  // - "224.0.0.0": Standard multicast group address for the sensor
-  // - "192.168.20.100": Your network interface's IP address
-  //
-  // For local testing in loopback mode, change these parameters:
-  // VoyantClient client("0.0.0.0:4444", "224.0.0.0", "127.0.0.1");
-  //  where:
-  //  - "127.0.0.1": Interface address (localhost/loopback)
-  VoyantClient client("0.0.0.0:4444", "224.0.0.0", "192.168.20.100");
+  std::cout << "Listening for frames (Ctrl+C to exit)..." << std::endl;
 
-  if(!client.isValid())
+  while(client.isRunning() && !CarbonClient::isTerminated())
   {
-    std::cerr << "Failed to create VoyantClient" << std::endl;
-    return 1;
-  }
-
-  // Main loop
-  std::cout << "Listening for frames (press Ctrl+C to exit)..." << std::endl;
-
-  while(!VoyantClient::isTerminated())
-  {
-    if(client.tryReceiveNextFrame())
+    if(client.tryReceiveFrame())
     {
-      // Access latest frame as a mutable reference
-      VoyantFrameWrapper &frame = client.latestFrame();
-
       std::cout << "###############" << std::endl;
-      std::cout << "Received frame:" << std::endl;
-      std::cout << frame << std::endl;
+      std::cout << client.latestFrame() << std::endl;
     }
-
-    // Sleep to avoid busy-waiting
-    std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    std::this_thread::sleep_for(std::chrono::milliseconds(1));
   }
 
+  client.stop();
   return 0;
 }
