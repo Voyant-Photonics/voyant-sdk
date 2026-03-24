@@ -24,7 +24,7 @@ int main()
 
   // Create a Carbon client
   // For local testing: use "127.0.0.1" as the interface IP
-  // For a real sensor: use your network interface IP (e.g., "192.168.20.100")
+  // For a real sensor: use your network interface IP (e.g., "192.168.1.100")
   CarbonConfig config;
   config.setBindAddr("0.0.0.0:5678").setGroupAddr("224.0.0.0").setInterfaceAddr("192.168.1.100");
 
