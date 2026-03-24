@@ -37,7 +37,7 @@ int main()
 
   // --- Create recorder using the configuration struct ---
   // Required: Set the base path for the output file(s).
-  VoyantRecorderConfig recConfig("test_recording/recording.bin");
+  VoyantRecorderConfig recConfig("test_recording/recording.vynt");
 
   // Example: Split files after 50 frames OR after reaching 20 MB, whichever comes first.
   recConfig.framesPerFile = 50;
