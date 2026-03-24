@@ -10,7 +10,7 @@ Receive live Voyant data and record it to a binary file.
 
 import argparse
 import time
-from voyant_api import VoyantClient
+from voyant_api import CarbonClient, CarbonConfig
 from voyant_api import VoyantRecorder
 from voyant_api import RecordStatus
 from voyant_api import init_voyant_logging
@@ -33,22 +33,13 @@ def parse_args():
 
     # --- Network Configuration ---
     parser.add_argument(
-        "--bind-addr",
+        "--config",
         type=str,
-        default="0.0.0.0:4444",
-        help="Local socket address to bind to",
-    )
-    parser.add_argument(
-        "--group-addr",
-        type=str,
-        default="224.0.0.0",
-        help="Multicast group address",
-    )
-    parser.add_argument(
-        "--interface-addr",
-        type=str,
-        default="127.0.0.1",
-        help="Interface address for multicast",
+        metavar="PATH",
+        help=(
+            "Path to JSON config file. "
+            "If omitted, default CarbonConfig values are used."
+        ),
     )
 
     # --- Recording Configuration ---
@@ -94,27 +85,6 @@ def parse_args():
         action="store_false",
         help="If set, disables adding a timestamp to the output filename",
     )
-    parser.add_argument(
-        "--keep-invalid-points",
-        action="store_true",
-        help="If set, invalid points will be kept in the assembled point cloud",
-    )
-
-    parser.add_argument(
-        "--use-msg-stamps",
-        action="store_true",
-        default=False,
-        help=(
-            "Use timestamps from received point groups instead of system time. "
-            "WARNING: Do not use this flag with Carbon Dev Kit (Meadowlark) units!"
-        ),
-    )
-    parser.add_argument(
-        "--track-timing",
-        action="store_true",
-        default=False,
-        help="Whether to collect statistics on packet timing and latency",
-    )
 
     # Set default for timestamp_filename to True, action='store_false' makes it False when flag is present
     parser.set_defaults(timestamp_filename=True)
@@ -129,14 +99,13 @@ def main():
     args = parse_args()
 
     # 1. Create the client to receive frames from the network
-    client = VoyantClient(
-        bind_addr=args.bind_addr,
-        group_addr=args.group_addr,
-        interface_addr=args.interface_addr,
-        filter_points=not args.keep_invalid_points,
-        use_msg_stamps=args.use_msg_stamps,
-        track_timing=args.track_timing,
-    )
+    config = CarbonConfig.from_json(args.config) if args.config else CarbonConfig()
+    print("Using config:")
+    print(config)
+    print()
+
+    client = CarbonClient(config)
+    client.start()
 
     # 2. Create the recorder to write frames to a file
     recorder = VoyantRecorder(
@@ -154,7 +123,7 @@ def main():
 
     try:
         # 3. Run the main recording loop
-        while True:
+        while client.is_running():
             frame = client.try_receive_frame()
             if frame is not None:
                 ###############################################
@@ -184,11 +153,13 @@ def main():
 
             else:
                 # No frame available yet, sleep briefly to avoid a busy loop
-                time.sleep(0.01)
+                time.sleep(0.001)
 
     except KeyboardInterrupt:
         print("\nCtrl+C detected. Finalizing recording...")
     finally:
+        client.stop()
+
         # 4. Finalize the recording to ensure the file is properly closed
         if recorder:
             print(f"Finalizing recording after {recorder.frames_recorded} total frames")
