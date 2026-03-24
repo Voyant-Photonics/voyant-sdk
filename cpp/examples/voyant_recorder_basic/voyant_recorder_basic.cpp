@@ -33,7 +33,11 @@ int main()
   // config.setPfa(1e-4f);
 
   CarbonClient client(config);
-  client.start();
+  if(!client.start())
+  {
+    std::cerr << "Failed to start CarbonClient" << std::endl;
+    return 1;
+  }
 
   // --- Create recorder using the configuration struct ---
   // Required: Set the base path for the output file(s).

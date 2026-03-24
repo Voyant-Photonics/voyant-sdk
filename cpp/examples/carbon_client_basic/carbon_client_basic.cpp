@@ -23,7 +23,11 @@ int main()
   // config.setPfa(1e-4f);
 
   CarbonClient client(config);
-  client.start();
+  if(!client.start())
+  {
+    std::cerr << "Failed to start CarbonClient" << std::endl;
+    return 1;
+  }
 
   std::cout << "Listening for frames (Ctrl+C to exit)..." << std::endl;
 
