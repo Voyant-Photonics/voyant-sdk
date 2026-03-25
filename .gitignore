@@ -15,3 +15,6 @@ build*/
 .vscode/
 *.bin
 *.mcap
+*.vynt
+venv/
+.venv/

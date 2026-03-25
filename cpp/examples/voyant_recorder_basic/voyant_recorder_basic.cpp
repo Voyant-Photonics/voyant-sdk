@@ -3,12 +3,13 @@
 // This example code is licensed under the MIT License.
 // See the LICENSE file in the repository root for full license text.
 
+#include <carbon_client.hpp>
+#include <carbon_config.hpp>
 #include <chrono>
 #include <iostream>
-#include <logging_utils.hpp>
+#include <logging_utils_ffi.hpp>
 #include <optional>
 #include <thread>
-#include <voyant_client.hpp>
 #include <voyant_data_recorder.hpp>
 
 int main()
@@ -19,32 +20,38 @@ int main()
   std::cout << "Starting Voyant recording example..." << std::endl;
 
   // Set up signal handling for graceful shutdown (Ctrl+C)
-  VoyantClient::setupSignalHandling();
+  CarbonClient::setupSignalHandling();
 
-  // Create a multicast client
+  // Create a Carbon client
   // For local testing: use "127.0.0.1" as the interface IP
-  // For a real sensor: use your network interface IP (e.g., "192.168.20.100")
-  VoyantClient client("0.0.0.0:4444", "224.0.0.0", "192.168.20.100");
+  // For a real sensor: use your network interface IP (e.g., "192.168.1.100")
+  CarbonConfig config;
+  config.setBindAddr("0.0.0.0:5678").setGroupAddr("224.0.0.0").setInterfaceAddr("192.168.1.100");
 
-  if(!client.isValid())
+  // Optional: override defaults as needed
+  // config.setRangeMax(50.0f);
+  // config.setPfa(1e-4f);
+
+  CarbonClient client(config);
+  if(!client.start())
   {
-    std::cerr << "Failed to create VoyantClient" << std::endl;
+    std::cerr << "Failed to start CarbonClient" << std::endl;
     return 1;
   }
 
   // --- Create recorder using the configuration struct ---
   // Required: Set the base path for the output file(s).
-  VoyantRecorderConfig config("test_recording/recording.bin");
+  VoyantRecorderConfig recConfig("test_recording/recording.vynt");
 
   // Example: Split files after 50 frames OR after reaching 20 MB, whichever comes first.
-  config.framesPerFile = 50;
-  config.sizePerFileMb = 20;
+  recConfig.framesPerFile = 50;
+  recConfig.sizePerFileMb = 20;
 
   // Example: Stop recording entirely after 200 total frames.
-  config.maxTotalFrames = 200;
+  recConfig.maxTotalFrames = 200;
 
   // Create the recorder with the specified configuration.
-  VoyantRecorder recorder(config);
+  VoyantRecorder recorder(recConfig);
 
   if(!recorder.isValid())
   {
@@ -56,12 +63,12 @@ int main()
 
   // Main recording loop
   bool shouldContinue = true;
-  while(!VoyantClient::isTerminated() && shouldContinue)
+  while(client.isRunning() && !CarbonClient::isTerminated() && shouldContinue)
   {
-    if(client.tryReceiveNextFrame())
+    if(client.tryReceiveFrame())
     {
       // Get the latest frame
-      const VoyantFrameWrapper &frame = client.latestFrame();
+      const auto &frame = client.latestFrame();
 
       // Record the frame
       RecordResult result = recorder.recordFrame(frame);
@@ -95,7 +102,7 @@ int main()
           break;
 
         case RecordResult::Split:
-          // File was split - this is still successful recording - only log if we have valid data
+          // File was split - this is still successful recording
           {
             std::optional<size_t> maybe_total = recorder.getTotalFramesRecorded();
             std::optional<size_t> maybe_splits = recorder.getSplitCount();
@@ -109,7 +116,7 @@ int main()
             }
             else
             {
-              std::cout << "File split occurred" << std::endl; // Simple fallback
+              std::cout << "File split occurred" << std::endl;
             }
           }
           break;
@@ -137,9 +144,12 @@ int main()
     // Small delay to avoid busy-waiting
     if(shouldContinue)
     {
-      std::this_thread::sleep_for(std::chrono::milliseconds(10));
+      std::this_thread::sleep_for(std::chrono::milliseconds(1));
     }
   }
+
+  client.stop();
+
   // Finalize recording
   std::cout << "\nFinalizing recording..." << std::endl;
   if(!recorder.finalize())

@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.15)
-project(voyant_client_basic)
+project(carbon_client_basic)
 
 # Find the voyant-api package if building this example directly
 if(NOT TARGET voyant-api::voyant-api)
@@ -7,13 +7,13 @@ if(NOT TARGET voyant-api::voyant-api)
 endif()
 
 # Create executable
-add_executable(voyant_client_basic voyant_client_basic.cpp)
+add_executable(carbon_client_basic carbon_client_basic.cpp)
 
 # Link with the Voyant API
-target_link_libraries(voyant_client_basic PRIVATE voyant-api::voyant-api)
+target_link_libraries(carbon_client_basic PRIVATE voyant-api::voyant-api)
 
 # Set output directory
-set_target_properties(voyant_client_basic
+set_target_properties(carbon_client_basic
     PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
 )

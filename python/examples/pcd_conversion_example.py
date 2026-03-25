@@ -22,9 +22,9 @@ per recording. Use --keep-invalid-points to include invalid points in
 the converted PCD files.
 
 Example usage:
-    python pcd_conversion_example.py --input recording.bin --output-dir ./pcd_out
-    python pcd_conversion_example.py --input recording.bin --output-dir ./pcd_out --max-frames 500
-    python pcd_conversion_example.py --input recording.bin --output-dir ./pcd_out --min-frame-index 1000 --max-frame-index 1099
+    python pcd_conversion_example.py --input recording.vynt --output-dir ./pcd_out
+    python pcd_conversion_example.py --input recording.vynt --output-dir ./pcd_out --max-frames 500
+    python pcd_conversion_example.py --input recording.vynt --output-dir ./pcd_out --min-frame-index 1000 --max-frame-index 1099
 """
 
 import argparse
@@ -46,7 +46,7 @@ def parse_args():
         "--input",
         type=str,
         required=True,
-        help="Path to the Voyant recording file (.bin)",
+        help="Path to the Voyant recording file (.vynt or .bin)",
     )
     parser.add_argument(
         "--output-dir",

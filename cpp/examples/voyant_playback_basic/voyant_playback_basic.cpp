@@ -7,7 +7,7 @@
 #include <chrono>
 #include <iomanip>
 #include <iostream>
-#include <logging_utils.hpp>
+#include <logging_utils_ffi.hpp>
 #include <string>
 #include <voyant_playback.hpp>
 
