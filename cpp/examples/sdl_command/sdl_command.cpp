@@ -52,7 +52,8 @@ int main()
   SdlStatus status = client.sendSdl(cmd);
   if(status != SdlStatus::Pending)
   {
-    std::cerr << "SDL command rejected before sending: SdlStatus(" << static_cast<int>(status) << ")" << std::endl;
+    std::cerr << "SDL command rejected before sending: SdlStatus(" << static_cast<int>(status)
+              << ")" << std::endl;
     client.stop();
     return 1;
   }
