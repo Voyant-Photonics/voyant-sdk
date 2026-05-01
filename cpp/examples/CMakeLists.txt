@@ -6,5 +6,6 @@ find_package(voyant-api REQUIRED PATHS /usr/lib/cmake/voyant-api)
 
 # Available SDK examples
 add_subdirectory(carbon_client_basic)
+add_subdirectory(sdl_command)
 add_subdirectory(voyant_playback_basic)
 add_subdirectory(voyant_recorder_basic)
