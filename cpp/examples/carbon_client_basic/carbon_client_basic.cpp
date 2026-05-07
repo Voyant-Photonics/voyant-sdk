@@ -3,11 +3,13 @@
 // This example code is licensed under the MIT License.
 // See the LICENSE file in the repository root for full license text.
 
+
 #include <carbon_client.hpp>
 #include <carbon_config.hpp>
 #include <chrono>
 #include <iostream>
 #include <logging_utils_ffi.hpp>
+#include <sensor_state_display.hpp>
 #include <thread>
 
 int main()
@@ -37,6 +39,7 @@ int main()
     {
       std::cout << "###############" << std::endl;
       std::cout << client.latestFrame() << std::endl;
+      std::cout << "Sensor State: " << client.getSensorState() << std::endl;
     }
     std::this_thread::sleep_for(std::chrono::milliseconds(1));
   }

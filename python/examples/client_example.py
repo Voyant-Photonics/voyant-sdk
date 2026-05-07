@@ -60,6 +60,8 @@ def main():
                 xyzv = frame.xyzv()
                 print(f"xyzv data:\n{xyzv}\n")
                 print()
+                state = client.sensor_state()
+                print(f"Sensor state: {state}\n")
 
                 ###############################################
                 # Insert your point cloud processing magic here
