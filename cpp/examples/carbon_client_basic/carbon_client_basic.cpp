@@ -3,7 +3,6 @@
 // This example code is licensed under the MIT License.
 // See the LICENSE file in the repository root for full license text.
 
-
 #include <carbon_client.hpp>
 #include <carbon_config.hpp>
 #include <chrono>
