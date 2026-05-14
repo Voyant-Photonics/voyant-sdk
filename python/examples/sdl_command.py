@@ -7,12 +7,13 @@
 """
 Send an SDL command to a Carbon sensor and wait for confirmation.
 
-SDL (Sensor Device Language) commands configure the sensor at runtime —
+SDL (Software Defined Lidar) commands configure the sensor at runtime —
 changing operating state, field of view, frame rate, and waveform parameters.
 
-This example sends a single command and polls for confirmation inline with
-the frame receive loop. In production, you may want to manage SDL in a
-separate thread, especially if frame processing is time-sensitive.
+This example uses the recommended blocking SDL path. The client waits for a
+heartbeat, builds the command from the current sensor read back, and lets
+send_sdl_blocking() apply settings through Idle and resume PointCloud
+automatically.
 """
 
 import argparse
@@ -63,15 +64,54 @@ def parse_args():
     return parser.parse_args()
 
 
-def build_command(args) -> SdlCommand:
-    """Build an SdlCommand from command-line arguments."""
-    cmd = SdlCommand()
+def wait_for_heartbeat(client, timeout_sec=5.0):
+    """Wait until sensor_state() contains heartbeat-derived SDL state."""
+    deadline = time.monotonic() + timeout_sec
+    while client.is_running() and time.monotonic() < deadline:
+        state = client.sensor_state()
+        if state.last_heartbeat_frame > 0:
+            return state
+        time.sleep(0.05)
+    return None
+
+
+def build_command(state, args) -> SdlCommand:
+    """Build an SdlCommand by modifying the latest heartbeat read back."""
+    cmd = state.to_sdl_command()
     cmd.req_state = SdlState.PointCloud
     cmd.hfov_deg = args.hfov
     cmd.hfov_center_deg = args.hfov_center
     cmd.frame_rate_fps = args.frame_rate
     cmd.ramp_length = SdlRampLength.V16_384us
     return cmd
+
+
+def non_blocking_send_and_poll_example(client, cmd: SdlCommand) -> SdlStatus:
+    """Example only: this is not the recommended path for sending SDL commands.
+
+    Prefer send_sdl_blocking(), which applies settings through Idle and resumes
+    PointCloud automatically unless the command requests Idle. The
+    send_sdl()/poll_sdl() APIs are non-blocking; keep this pattern for event
+    loops that must poll SDL progress alongside frame processing.
+    """
+    status = client.send_sdl(cmd)
+    if status != SdlStatus.Pending:
+        return status
+
+    while client.is_running():
+        frame = client.try_receive_frame()
+        if frame is not None:
+            # Do regular frame processing here.
+            print(f"Frame: {frame.n_valid_points} points")
+
+        status = client.poll_sdl()
+        if status != SdlStatus.Pending:
+            return status
+
+        if frame is None:
+            time.sleep(0.001)
+
+    return SdlStatus.Pending
 
 
 def main():
@@ -84,19 +124,28 @@ def main():
     client.start()
     print("CarbonClient started. Press Ctrl+C to stop.\n")
 
-    # Build and send the SDL command.
-    cmd = build_command(args)
-    print(f"Sending SDL command: {cmd}")
-    status = client.send_sdl(cmd)
-
-    if status != SdlStatus.Pending:
-        # Command was rejected before sending — no need to poll.
-        print(f"SDL command rejected: {status}")
+    state = wait_for_heartbeat(client)
+    if state is None:
+        print("Timed out waiting for a sensor heartbeat; cannot send SDL command.")
         client.stop()
         return
 
-    print("SDL command sent. Waiting for sensor confirmation...\n")
-    sdl_resolved = False
+    try:
+        cmd = build_command(state, args)
+    except ValueError as exc:
+        print(f"Could not build SDL command from sensor state: {exc}")
+        client.stop()
+        return
+
+    print(f"Sending SDL command: {cmd}")
+    status = client.send_sdl_blocking(cmd)
+
+    if status != SdlStatus.Applied:
+        print(f"SDL command failed: {status}")
+        client.stop()
+        return
+
+    print("SDL command applied successfully.\n")
     frame_count = 0
 
     try:
@@ -106,18 +155,6 @@ def main():
             if frame is not None:
                 frame_count += 1
                 print(f"Frame {frame_count}: {frame.n_valid_points} points")
-
-            # Poll for SDL confirmation on every iteration, whether or not
-            # a frame arrived. The sensor confirms via heartbeat, not frame data.
-            if not sdl_resolved:
-                status = client.poll_sdl()
-                if status != SdlStatus.Pending:
-                    sdl_resolved = True
-                    if status == SdlStatus.Applied:
-                        print("\nSDL command applied successfully.")
-                    else:
-                        print(f"\nSDL command failed: {status}")
-                    break  # Stop after SDL is resolved — no need to poll further.
 
             if frame is None:
                 time.sleep(0.001)
