@@ -131,6 +131,7 @@ int main()
     return 1;
   }
 
+  // See nonBlockingSendAndPollExample() above for the non-blocking alternative.
   std::cout << "Sending SDL command..." << std::endl;
   SdlStatus status = client.sendSdlBlocking(cmd);
   if(status != SdlStatus::Applied)

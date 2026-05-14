@@ -137,6 +137,7 @@ def main():
         client.stop()
         return
 
+    # See non_blocking_send_and_poll_example() above for the non-blocking alternative.
     print(f"Sending SDL command: {cmd}")
     status = client.send_sdl_blocking(cmd)
 
