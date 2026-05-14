@@ -63,7 +63,8 @@ SdlCommandParams buildCommand(const SensorState &state)
  * sendSdl()/pollSdl() APIs are non-blocking; keep this pattern for event
  * loops that must poll SDL progress alongside frame processing.
  */
-[[maybe_unused]] SdlStatus nonBlockingSendAndPollExample(CarbonClient &client, const SdlCommandParams &cmd)
+[[maybe_unused]] SdlStatus nonBlockingSendAndPollExample(CarbonClient &client,
+                                                         const SdlCommandParams &cmd)
 {
   SdlStatus status = client.sendSdl(cmd);
   if(status != SdlStatus::Pending)
