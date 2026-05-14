@@ -21,26 +21,26 @@
 #include <exception>
 #include <iostream>
 #include <logging_utils_ffi.hpp>
+#include <optional>
 #include <thread>
 
 namespace
 {
-bool waitForHeartbeat(CarbonClient &client,
-                      SensorState &state,
-                      std::chrono::seconds timeout = std::chrono::seconds(5))
+std::optional<SensorState> waitForHeartbeat(CarbonClient &client,
+                                            std::chrono::seconds timeout = std::chrono::seconds(5))
 {
   const auto deadline = std::chrono::steady_clock::now() + timeout;
   while(client.isRunning() && !CarbonClient::isTerminated() &&
         std::chrono::steady_clock::now() < deadline)
   {
-    state = client.getSensorState();
+    SensorState state = client.getSensorState();
     if(state.last_heartbeat_frame > 0)
     {
-      return true;
+      return state;
     }
     std::this_thread::sleep_for(std::chrono::milliseconds(50));
   }
-  return false;
+  return std::nullopt;
 }
 
 SdlCommandParams buildCommand(const SensorState &state)
@@ -63,7 +63,7 @@ SdlCommandParams buildCommand(const SensorState &state)
  * sendSdl()/pollSdl() APIs are non-blocking; keep this pattern for event
  * loops that must poll SDL progress alongside frame processing.
  */
-SdlStatus nonBlockingSendAndPollExample(CarbonClient &client, const SdlCommandParams &cmd)
+[[maybe_unused]] SdlStatus nonBlockingSendAndPollExample(CarbonClient &client, const SdlCommandParams &cmd)
 {
   SdlStatus status = client.sendSdl(cmd);
   if(status != SdlStatus::Pending)
@@ -111,8 +111,8 @@ int main()
     return 1;
   }
 
-  SensorState state{};
-  if(!waitForHeartbeat(client, state))
+  auto state = waitForHeartbeat(client);
+  if(!state)
   {
     std::cerr << "Timed out waiting for a sensor heartbeat; cannot send SDL command." << std::endl;
     client.stop();
@@ -122,7 +122,7 @@ int main()
   SdlCommandParams cmd{};
   try
   {
-    cmd = buildCommand(state);
+    cmd = buildCommand(*state);
   }
   catch(const std::exception &e)
   {
