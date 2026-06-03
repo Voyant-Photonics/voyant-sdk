@@ -39,6 +39,7 @@ int main()
       std::cout << "###############" << std::endl;
       std::cout << client.latestFrame() << std::endl;
       std::cout << "Sensor State: " << client.getSensorState() << std::endl;
+      std::cout << "Time Sync: " << client.getTimeSyncState() << std::endl;
     }
     std::this_thread::sleep_for(std::chrono::milliseconds(1));
   }

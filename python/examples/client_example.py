@@ -63,6 +63,10 @@ def main():
                 state = client.sensor_state()
                 print(f"Sensor state: {state}\n")
 
+                # Host<->FPGA clock sync health (quality, offset, jitter)
+                time_sync = client.time_sync_state()
+                print(f"Time sync: {time_sync}\n")
+
                 ###############################################
                 # Insert your point cloud processing magic here
                 ###############################################
