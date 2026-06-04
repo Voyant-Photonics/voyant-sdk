@@ -17,7 +17,12 @@ int main()
   CarbonClient::setupSignalHandling();
 
   CarbonConfig config;
-  config.setBindAddr("0.0.0.0:5678").setGroupAddr("224.0.0.0").setInterfaceAddr("127.0.0.1");
+  // To run with the sensor:
+  // config.setBindAddr("0.0.0.0:5678").setGroupAddr("224.0.0.0").setInterfaceAddr("192.168.1.100").setFpgaTargetAddr("192.168.1.100:1234");
+  config.setBindAddr("0.0.0.0:5678")
+      .setGroupAddr("224.0.0.0")
+      .setInterfaceAddr("127.0.0.1")
+      .setFpgaTargetAddr("127.0.0.1:1234");
 
   // Optional: override defaults as needed
   // config.setRangeMax(50.0f);
@@ -39,6 +44,7 @@ int main()
       std::cout << "###############" << std::endl;
       std::cout << client.latestFrame() << std::endl;
       std::cout << "Sensor State: " << client.getSensorState() << std::endl;
+      std::cout << "Time Sync: " << client.getTimeSyncState() << std::endl;
     }
     std::this_thread::sleep_for(std::chrono::milliseconds(1));
   }
