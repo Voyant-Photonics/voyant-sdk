@@ -37,4 +37,6 @@ jobs:
             bash -c 'python3 python/examples/client_example.py --help && \
                      python3 python/examples/pcd_conversion_example.py --help && \
                      python3 python/examples/playback_example.py --help && \
-                     python3 python/examples/recorder_example.py --help'
+                     python3 python/examples/recorder_example.py --help && \
+                     python3 python/examples/peak_dump_example.py --help && \
+                     python3 python/examples/background_noise_calibration_example.py --help'
