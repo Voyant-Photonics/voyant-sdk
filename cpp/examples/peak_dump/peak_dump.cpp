@@ -23,6 +23,7 @@
 #include <iostream>
 #include <logging_utils_ffi.hpp>
 #include <sensor_state_display.hpp>
+#include <string>
 #include <thread>
 
 int main(int argc, char **argv)

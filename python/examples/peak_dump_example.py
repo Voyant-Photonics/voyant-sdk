@@ -99,10 +99,13 @@ def main():
         print(f"Peak dump finished after {frame_count} frames.")
     except KeyboardInterrupt:
         print("\nStopping peak dump...")
-        client.stop_peak_dump()
-        # The file ends on a whole frame; poll until the writer is done.
-        while client.is_peak_dumping():
-            time.sleep(0.01)
+        # The interrupt may arrive before the dump starts (e.g. during
+        # wait_for_heartbeat), so only stop a dump that is actually running.
+        if client.is_peak_dumping():
+            client.stop_peak_dump()
+            # The file ends on a whole frame; poll until the writer is done.
+            while client.is_peak_dumping():
+                time.sleep(0.01)
         print("Peak dump stopped.")
     except RuntimeError as exc:
         print(f"Peak dump failed: {exc}")
