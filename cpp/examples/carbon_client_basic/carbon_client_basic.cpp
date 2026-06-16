@@ -6,23 +6,37 @@
 #include <carbon_client.hpp>
 #include <carbon_config.hpp>
 #include <chrono>
+#include <cstring>
 #include <iostream>
 #include <logging_utils_ffi.hpp>
 #include <sensor_state_display.hpp>
 #include <thread>
 
-int main()
+int main(int argc, char **argv)
 {
   voyant_log_init_c();
   CarbonClient::setupSignalHandling();
 
+  bool sim = false; // --sim targets a local carbon_simulator
+  for(int i = 1; i < argc; ++i)
+  {
+    if(std::strcmp(argv[i], "--sim") == 0)
+    {
+      sim = true;
+    }
+  }
+
+  // Defaults target a real sensor; pass --sim to target a local carbon_simulator.
   CarbonConfig config;
-  // To run with the sensor:
-  // config.setBindAddr("0.0.0.0:5678").setGroupAddr("224.0.0.0").setInterfaceAddr("192.168.1.100").setFpgaTargetAddr("192.168.1.100:1234");
-  config.setBindAddr("0.0.0.0:5678")
-      .setGroupAddr("224.0.0.0")
-      .setInterfaceAddr("127.0.0.1")
-      .setFpgaTargetAddr("127.0.0.1:1234");
+  config.setBindAddr("0.0.0.0:5678").setGroupAddr("239.255.48.84");
+  if(sim)
+  {
+    config.setInterfaceAddr("127.0.0.1").setFpgaTargetAddr("127.0.0.1:1234");
+  }
+  else
+  {
+    config.setInterfaceAddr("192.168.1.100").setFpgaTargetAddr("192.168.1.128:1234");
+  }
 
   // Optional: override defaults as needed
   // config.setRangeMax(50.0f);
