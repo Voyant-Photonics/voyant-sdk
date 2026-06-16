@@ -38,7 +38,7 @@ def parse_args():
         "--config",
         type=str,
         metavar="PATH",
-        help="Path to JSON config file. If omitted, default CarbonConfig values are used.",
+        help="Path to a JSON device config (e.g. config/device_config.json with your sensor interface_addr). If omitted, default CarbonConfig values are used.",
     )
     parser.add_argument(
         "--hfov",
