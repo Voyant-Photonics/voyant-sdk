@@ -5,7 +5,7 @@
 # See the LICENSE file in the repository root for full license text.
 
 """
-Receive live Voyant data over multicast UDP.
+Receive live Voyant data over UDP.
 """
 
 import argparse
@@ -15,7 +15,7 @@ from voyant_api import CarbonClient, CarbonConfig, init_voyant_logging
 
 def parse_args():
     parser = argparse.ArgumentParser(
-        description="Receive live Voyant data over multicast UDP",
+        description="Receive live Voyant data over UDP",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
 
