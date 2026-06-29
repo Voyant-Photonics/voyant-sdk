@@ -26,77 +26,75 @@
 #include <iostream>
 #include <logging_utils_ffi.hpp>
 
-int main(int argc, char **argv)
+int main(int argc, char** argv)
 {
-  voyant_log_init_c();
-  CarbonClient::setupSignalHandling();
+    voyant_log_init_c();
+    CarbonClient::setupSignalHandling();
 
-  bool refine = false;
-  bool sim = false; // --sim targets a local carbon_simulator
-  for(int i = 1; i < argc; ++i)
-  {
-    if(std::strcmp(argv[i], "--refine") == 0)
+    bool refine = false;
+    bool sim    = false; // --sim targets a local carbon_simulator
+    for (int i = 1; i < argc; ++i)
     {
-      refine = true;
+        if (std::strcmp(argv[i], "--refine") == 0)
+        {
+            refine = true;
+        }
+        else if (std::strcmp(argv[i], "--sim") == 0)
+        {
+            sim = true;
+        }
     }
-    else if(std::strcmp(argv[i], "--sim") == 0)
+
+    // Defaults target a real sensor; pass --sim to target a local carbon_simulator.
+    CarbonConfig config;
+    config.setBindAddr("0.0.0.0:5678").setGroupAddr("239.255.48.84");
+    if (sim)
     {
-      sim = true;
+        config.setInterfaceAddr("127.0.0.1").setFpgaTargetAddr("127.0.0.1:1234");
     }
-  }
+    else
+    {
+        config.setInterfaceAddr("192.168.1.100").setFpgaTargetAddr("192.168.1.128:1234");
+    }
 
-  // Defaults target a real sensor; pass --sim to target a local carbon_simulator.
-  CarbonConfig config;
-  config.setBindAddr("0.0.0.0:5678").setGroupAddr("239.255.48.84");
-  if(sim)
-  {
-    config.setInterfaceAddr("127.0.0.1").setFpgaTargetAddr("127.0.0.1:1234");
-  }
-  else
-  {
-    config.setInterfaceAddr("192.168.1.100").setFpgaTargetAddr("192.168.1.128:1234");
-  }
+    CarbonClient client(config);
+    if (!client.start())
+    {
+        std::cerr << "Failed to start CarbonClient" << std::endl;
+        return 1;
+    }
 
-  CarbonClient client(config);
-  if(!client.start())
-  {
-    std::cerr << "Failed to start CarbonClient" << std::endl;
-    return 1;
-  }
+    // Both operations require a heartbeat (for the box serial) and Idle on entry.
+    if (!client.waitForHeartbeat())
+    {
+        std::cerr << "Timed out waiting for a sensor heartbeat." << std::endl;
+        client.stop();
+        return 1;
+    }
 
-  // Both operations require a heartbeat (for the box serial) and Idle on entry.
-  if(!client.waitForHeartbeat())
-  {
-    std::cerr << "Timed out waiting for a sensor heartbeat." << std::endl;
+    if (!client.ensureIdleForCalibration())
+    {
+        std::cerr << "Could not drive the sensor to Idle; aborting." << std::endl;
+        client.stop();
+        return 1;
+    }
+
+    bool ok = false;
+    if (refine)
+    {
+        std::cout << "Cover the sensor window now — refinement assumes background noise only. "
+                     "Running refinement (~10-20 s)..."
+                  << std::endl;
+        ok = client.refineBackgroundNoise(); // 0 iterations → built-in default
+        std::cout << (ok ? "Background-noise refinement complete." : "Background-noise refinement failed.") << std::endl;
+    }
+    else
+    {
+        ok = client.applyDefaultBackgroundNoise();
+        std::cout << (ok ? "Default background-noise calibration applied." : "Default background-noise calibration failed.")
+                  << std::endl;
+    }
+
     client.stop();
-    return 1;
-  }
-
-  if(!client.ensureIdleForCalibration())
-  {
-    std::cerr << "Could not drive the sensor to Idle; aborting." << std::endl;
-    client.stop();
-    return 1;
-  }
-
-  bool ok = false;
-  if(refine)
-  {
-    std::cout << "Cover the sensor window now — refinement assumes background noise only. "
-                 "Running refinement (~10-20 s)..."
-              << std::endl;
-    ok = client.refineBackgroundNoise(); // 0 iterations → built-in default
-    std::cout << (ok ? "Background-noise refinement complete." : "Background-noise refinement failed.")
-              << std::endl;
-  }
-  else
-  {
-    ok = client.applyDefaultBackgroundNoise();
-    std::cout << (ok ? "Default background-noise calibration applied."
-                     : "Default background-noise calibration failed.")
-              << std::endl;
-  }
-
-  client.stop();
-  return ok ? 0 : 1;
+    return ok ? 0 : 1;
 }

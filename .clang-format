@@ -1,32 +1,89 @@
+---
 BasedOnStyle: LLVM
+Language: Cpp
 
-UseTab: Never
-IndentWidth: 2
-BreakBeforeBraces: Allman
-AllowShortIfStatementsOnASingleLine: false
-IndentCaseLabels: true
-ColumnLimit: 100
-AlignAfterOpenBracket: Align
-AlignOperands: Align
+# Classes
+AccessModifierOffset: -4
 
-InsertBraces: true
-SpaceBeforeParens: Never
-FixNamespaceComments: true
+# Short statements
+AllowShortBlocksOnASingleLine: Never
+AllowShortFunctionsOnASingleLine: Empty
+AllowShortIfStatementsOnASingleLine: Never
+AllowShortLoopsOnASingleLine: false
+
+# Line breaking
+AlignConsecutiveAssignments: true
+AlignConsecutiveDeclarations: true
+AlignOperands: AlignAfterOperator
 AlignTrailingComments: true
-AllowShortBlocksOnASingleLine: false
 
-BinPackArguments: false
+# Return type handling
+AlwaysBreakAfterReturnType: None
+
+# Line breaking
+BreakBeforeBinaryOperators: None
+BreakBeforeBraces: Allman
+
+# Parameter spacing
 BinPackParameters: false
-ExperimentalAutoDetectBinPacking: false
 AllowAllParametersOfDeclarationOnNextLine: false
-AllowAllArgumentsOnNextLine: false
-AlignEscapedNewlines: Left
+
+# No indentation inside of extern blocks
+IndentExternBlock: NoIndent
+
+# Constructor handling
 BreakConstructorInitializers: BeforeColon
+
+ColumnLimit: 120
+ContinuationIndentWidth: 4
+
+# Added features
+FixNamespaceComments: true
+
+# Includes
+IncludeBlocks: Regroup
+IncludeCategories:
+  - Regex: '^<.*>'
+    Priority: 1
+  - Regex: '^".*"'
+    Priority: 2
+IncludeIsMainRegex: '([-_A-Za-z0-9]+)\.(h|hpp)'
+
+# Classes
+IndentAccessModifiers: false
+IndentCaseLabels: true
+IndentGotoLabels: false
+IndentWidth: 4
+
+# Added features
+InsertBraces: true
+
+# Constructor handling
 PackConstructorInitializers: Never
 
-AlwaysBreakAfterReturnType: None
-PenaltyReturnTypeOnItsOwnLine: 999
-PenaltyExcessCharacter: 5
+# Penalty settings
+PenaltyBreakBeforeFirstCallParameter: 100
 PenaltyBreakComment: 20
-PenaltyBreakBeforeFirstCallParameter: 0
 PenaltyBreakOpenParenthesis: 2
+PenaltyExcessCharacter: 5
+PenaltyReturnTypeOnItsOwnLine: 999
+
+# Pointers
+PointerAlignment: Left
+
+# Comments
+ReflowComments: true
+
+# Includes
+SortIncludes: true
+
+# Added features
+SpaceBeforeParens: ControlStatements
+
+TabWidth: 4
+UseTab: Never
+
+---
+BasedOnStyle: LLVM
+Language: Json
+IndentWidth: 4
