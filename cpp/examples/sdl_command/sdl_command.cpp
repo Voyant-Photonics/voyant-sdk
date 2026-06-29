@@ -10,9 +10,8 @@
  * changing operating state, field of view, frame rate, and waveform parameters.
  *
  * This example uses the recommended blocking SDL path. The client waits for a
- * heartbeat, builds the command from the current sensor read back, and lets
- * sendSdlBlocking() apply settings through Idle and resume PointCloud
- * automatically.
+ * heartbeat, builds the command from the current sensor read back, and calls
+ * sendSdlBlocking() to apply the settings and wait for confirmation.
  */
 
 #include <carbon_client.hpp>
@@ -22,24 +21,23 @@
 #include <exception>
 #include <iostream>
 #include <logging_utils_ffi.hpp>
-#include <optional>
 #include <thread>
 
 namespace
 {
-std::optional<SensorState> waitForHeartbeat(CarbonClient& client, std::chrono::seconds timeout = std::chrono::seconds(5))
+bool waitForHeartbeat(CarbonClient& client, SensorState& state, std::chrono::seconds timeout = std::chrono::seconds(5))
 {
     const auto deadline = std::chrono::steady_clock::now() + timeout;
     while (client.isRunning() && !CarbonClient::isTerminated() && std::chrono::steady_clock::now() < deadline)
     {
-        SensorState state = client.getSensorState();
+        state = client.getSensorState();
         if (state.last_heartbeat_frame > 0)
         {
-            return state;
+            return true;
         }
         std::this_thread::sleep_for(std::chrono::milliseconds(50));
     }
-    return std::nullopt;
+    return false;
 }
 
 SdlCommandParams buildCommand(const SensorState& state)
@@ -49,20 +47,22 @@ SdlCommandParams buildCommand(const SensorState& state)
     cmd.hfov_deg           = 60.0f;
     cmd.hfov_center_deg    = 0.0f;
     cmd.frame_rate_fps     = 10.0f;
-    cmd.ramp_length        = static_cast<uint8_t>(SdlRampLength::V16_384us);
     cmd.ramp_bandwidth_ghz = 6.0f;
+    // ramp_length is firmware-fixed (16.384 µs) and readback-only; the build ignores it.
+    // For a static line (linescan), use makeLinescanCommand() instead.
     return cmd;
 }
 
 /**
  * Example only: this is not the recommended path for sending SDL commands.
  *
- * Prefer sendSdlBlocking(), which applies settings through Idle and resumes
- * PointCloud automatically unless the command requests Idle. The
- * sendSdl()/pollSdl() APIs are non-blocking; keep this pattern for event
- * loops that must poll SDL progress alongside frame processing.
+ * Prefer sendSdlBlocking() for normal use; it sends the command and waits for
+ * confirmation. The sendSdl()/pollSdl() APIs are non-blocking; keep this pattern
+ * for event loops that must poll SDL progress alongside frame processing. sendSdl()
+ * applies a PointCloud request via the same transparent two-step as the blocking
+ * path, so pollSdl() must be driven to completion to confirm it.
  */
-[[maybe_unused]] SdlStatus nonBlockingSendAndPollExample(CarbonClient& client, const SdlCommandParams& cmd)
+SdlStatus nonBlockingSendAndPollExample(CarbonClient& client, const SdlCommandParams& cmd)
 {
     SdlStatus status = client.sendSdl(cmd);
     if (status != SdlStatus::Pending)
@@ -96,7 +96,8 @@ int main(int argc, char** argv)
     voyant_log_init_c();
     CarbonClient::setupSignalHandling();
 
-    bool sim = false; // --sim targets a local carbon_simulator
+    // Connect to a real sensor by default; pass --sim to target a local carbon_simulator.
+    bool sim = false;
     for (int i = 1; i < argc; ++i)
     {
         if (std::strcmp(argv[i], "--sim") == 0)
@@ -105,16 +106,11 @@ int main(int argc, char** argv)
         }
     }
 
-    // Defaults target a real sensor; pass --sim to target a local carbon_simulator.
     CarbonConfig config;
-    config.setBindAddr("0.0.0.0:5678").setGroupAddr("239.255.48.84");
     if (sim)
     {
+        // Point at the local carbon_simulator on loopback.
         config.setInterfaceAddr("127.0.0.1").setFpgaTargetAddr("127.0.0.1:1234");
-    }
-    else
-    {
-        config.setInterfaceAddr("192.168.1.100").setFpgaTargetAddr("192.168.1.128:1234");
     }
 
     CarbonClient client(config);
@@ -124,8 +120,8 @@ int main(int argc, char** argv)
         return 1;
     }
 
-    auto state = waitForHeartbeat(client);
-    if (!state)
+    SensorState state{};
+    if (!waitForHeartbeat(client, state))
     {
         std::cerr << "Timed out waiting for a sensor heartbeat; cannot send SDL command." << std::endl;
         client.stop();
@@ -135,7 +131,7 @@ int main(int argc, char** argv)
     SdlCommandParams cmd{};
     try
     {
-        cmd = buildCommand(*state);
+        cmd = buildCommand(state);
     }
     catch (const std::exception& e)
     {
@@ -144,7 +140,6 @@ int main(int argc, char** argv)
         return 1;
     }
 
-    // See nonBlockingSendAndPollExample() above for the non-blocking alternative.
     std::cout << "Sending SDL command..." << std::endl;
     SdlStatus status = client.sendSdlBlocking(cmd);
     if (status != SdlStatus::Applied)

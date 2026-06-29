@@ -11,9 +11,8 @@ SDL (Software Defined Lidar) commands configure the sensor at runtime —
 changing operating state, field of view, frame rate, and waveform parameters.
 
 This example uses the recommended blocking SDL path. The client waits for a
-heartbeat, builds the command from the current sensor read back, and lets
-send_sdl_blocking() apply settings through Idle and resume PointCloud
-automatically.
+heartbeat, builds the command from the current sensor read back, and calls
+send_sdl_blocking() to apply the settings and wait for confirmation.
 """
 
 import argparse
@@ -23,7 +22,6 @@ from voyant_api import (
     CarbonConfig,
     SdlCommand,
     SdlState,
-    SdlRampLength,
     SdlStatus,
     init_voyant_logging,
 )
@@ -38,7 +36,7 @@ def parse_args():
         "--config",
         type=str,
         metavar="PATH",
-        help="Path to a JSON device config (e.g. config/device_config.json with your sensor interface_addr). If omitted, default CarbonConfig values are used.",
+        help="Path to JSON config file. If omitted, default CarbonConfig values are used.",
     )
     parser.add_argument(
         "--hfov",
@@ -52,14 +50,18 @@ def parse_args():
         type=float,
         default=0.0,
         metavar="DEG",
-        help="Horizontal FOV center in degrees (−60.0 – 60.0).",
+        # Must be 0 for now — send_sdl rejects a non-zero center. Beam steering is not yet supported:
+        # in swept mode (hfov != 0) it is not yet implemented (a deferred feature), and in static-line
+        # mode it is temporarily blocked by firmware (MCU v2.5.0 / FPGA v1.3.3), which centers the
+        # mirror regardless.
+        help="Horizontal FOV center in degrees (must be 0 for now — steering not yet supported).",
     )
     parser.add_argument(
         "--frame-rate",
         type=float,
         default=10.0,
         metavar="FPS",
-        help="Frame rate in fps (1.0 – 19.0).",
+        help="Frame rate in fps (1.0 – 20.0).",
     )
     return parser.parse_args()
 
@@ -82,17 +84,17 @@ def build_command(state, args) -> SdlCommand:
     cmd.hfov_deg = args.hfov
     cmd.hfov_center_deg = args.hfov_center
     cmd.frame_rate_fps = args.frame_rate
-    cmd.ramp_length = SdlRampLength.V16_384us
     return cmd
 
 
 def non_blocking_send_and_poll_example(client, cmd: SdlCommand) -> SdlStatus:
     """Example only: this is not the recommended path for sending SDL commands.
 
-    Prefer send_sdl_blocking(), which applies settings through Idle and resumes
-    PointCloud automatically unless the command requests Idle. The
-    send_sdl()/poll_sdl() APIs are non-blocking; keep this pattern for event
-    loops that must poll SDL progress alongside frame processing.
+    Prefer send_sdl_blocking() for normal use; it sends the command and waits
+    for confirmation. The send_sdl()/poll_sdl() APIs are non-blocking; keep this
+    pattern for event loops that must poll SDL progress alongside frame processing.
+    send_sdl() applies a PointCloud request via the same transparent two-step as
+    the blocking path, so poll_sdl() must be driven to completion to confirm it.
     """
     status = client.send_sdl(cmd)
     if status != SdlStatus.Pending:
@@ -137,7 +139,6 @@ def main():
         client.stop()
         return
 
-    # See non_blocking_send_and_poll_example() above for the non-blocking alternative.
     print(f"Sending SDL command: {cmd}")
     status = client.send_sdl_blocking(cmd)
 

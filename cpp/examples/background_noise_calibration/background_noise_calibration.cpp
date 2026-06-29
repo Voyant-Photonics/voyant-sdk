@@ -12,12 +12,12 @@
  *     sensor window MUST be covered first — the capture assumes background noise
  *     only. This cycles the sensor internally and returns it to Idle (~10-20 s).
  *
- * Both calls block until done. The bindings do not start streaming afterward —
- * the sensor is left in Idle. The box is identified from the sensor's heartbeat
- * — no serial argument needed.
+ * Both calls block until done. Unlike the visualizer, the bindings do not start
+ * streaming afterward — the sensor is left in Idle. The box is identified from
+ * the sensor's heartbeat — no serial argument needed.
  *
  * Usage:
- *   background_noise_calibration [--refine] [--sim]
+ *   background_noise_calibration [--refine]
  */
 
 #include <carbon_client.hpp>
@@ -45,18 +45,13 @@ int main(int argc, char** argv)
         }
     }
 
-    // Defaults target a real sensor; pass --sim to target a local carbon_simulator.
+    // Connect to a real sensor by default; pass --sim to target a local carbon_simulator.
     CarbonConfig config;
-    config.setBindAddr("0.0.0.0:5678").setGroupAddr("239.255.48.84");
     if (sim)
     {
+        // Point at the local carbon_simulator on loopback.
         config.setInterfaceAddr("127.0.0.1").setFpgaTargetAddr("127.0.0.1:1234");
     }
-    else
-    {
-        config.setInterfaceAddr("192.168.1.100").setFpgaTargetAddr("192.168.1.128:1234");
-    }
-
     CarbonClient client(config);
     if (!client.start())
     {
