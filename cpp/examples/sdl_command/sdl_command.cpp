@@ -62,7 +62,7 @@ SdlCommandParams buildCommand(const SensorState& state)
  * applies a PointCloud request via the same transparent two-step as the blocking
  * path, so pollSdl() must be driven to completion to confirm it.
  */
-SdlStatus nonBlockingSendAndPollExample(CarbonClient& client, const SdlCommandParams& cmd)
+[[maybe_unused]] SdlStatus nonBlockingSendAndPollExample(CarbonClient& client, const SdlCommandParams& cmd)
 {
     SdlStatus status = client.sendSdl(cmd);
     if (status != SdlStatus::Pending)

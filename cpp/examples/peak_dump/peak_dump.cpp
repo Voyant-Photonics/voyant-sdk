@@ -11,7 +11,7 @@
  * --max-frames is reached, or when stopped via Ctrl+C.
  *
  * Usage:
- *   peak_dump <output.csv> [--max-frames N]
+ *   peak_dump <output.csv> [--max-frames N] [--sim]
  */
 
 #include <carbon_client.hpp>

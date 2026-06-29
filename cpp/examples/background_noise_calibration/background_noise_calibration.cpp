@@ -17,7 +17,7 @@
  * the sensor's heartbeat — no serial argument needed.
  *
  * Usage:
- *   background_noise_calibration [--refine]
+ *   background_noise_calibration [--refine] [--sim]
  */
 
 #include <carbon_client.hpp>

@@ -63,7 +63,10 @@ def parse_args():
         metavar="FPS",
         help="Frame rate in fps (1.0 – 20.0).",
     )
-    return parser.parse_args()
+    args = parser.parse_args()
+    if args.hfov_center != 0.0:
+        parser.error("--hfov-center must be 0 for now; steering is not yet supported")
+    return args
 
 
 def wait_for_heartbeat(client, timeout_sec=5.0):
