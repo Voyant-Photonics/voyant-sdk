@@ -72,10 +72,10 @@ SdlCommandParams buildCommand(const SensorState& state)
 
     while (client.isRunning() && !CarbonClient::isTerminated())
     {
-        if (client.tryReceiveFrame())
+        if (auto frame = client.tryReceiveFrame())
         {
             // Do regular frame processing here.
-            std::cout << "Frame: " << client.latestFrame() << std::endl;
+            std::cout << "Frame: " << *frame << std::endl;
         }
 
         status = client.pollSdl();
@@ -96,7 +96,7 @@ int main(int argc, char** argv)
     voyant_log_init_c();
     CarbonClient::setupSignalHandling();
 
-    // Connect to a real sensor by default; pass --sim to target a local carbon_simulator.
+    // Connect to a real sensor by default; pass --sim to target a local voyant_simulator.
     bool sim = false;
     for (int i = 1; i < argc; ++i)
     {
@@ -109,7 +109,7 @@ int main(int argc, char** argv)
     CarbonConfig config;
     if (sim)
     {
-        // Point at the local carbon_simulator on loopback.
+        // Point at the local voyant_simulator on loopback.
         config.setInterfaceAddr("127.0.0.1").setFpgaTargetAddr("127.0.0.1:1234");
     }
 
@@ -154,10 +154,10 @@ int main(int argc, char** argv)
     int frame_count = 0;
     while (client.isRunning() && !CarbonClient::isTerminated())
     {
-        if (client.tryReceiveFrame())
+        if (auto frame = client.tryReceiveFrame())
         {
             frame_count++;
-            std::cout << "Frame " << frame_count << ": " << client.latestFrame() << std::endl;
+            std::cout << "Frame " << frame_count << ": " << *frame << std::endl;
         }
 
         std::this_thread::sleep_for(std::chrono::milliseconds(1));

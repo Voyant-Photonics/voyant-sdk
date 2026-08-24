@@ -52,8 +52,7 @@ def parse_args():
         metavar="DEG",
         # Must be 0 for now — send_sdl rejects a non-zero center. Beam steering is not yet supported:
         # in swept mode (hfov != 0) it is not yet implemented (a deferred feature), and in static-line
-        # mode it is temporarily blocked by firmware (MCU v2.5.0 / FPGA v1.3.3), which centers the
-        # mirror regardless.
+        # mode it is temporarily blocked by firmware, which centers the mirror regardless.
         help="Horizontal FOV center in degrees (must be 0 for now — steering not yet supported).",
     )
     parser.add_argument(

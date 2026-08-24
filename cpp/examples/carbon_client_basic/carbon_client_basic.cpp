@@ -17,7 +17,7 @@ int main(int argc, char** argv)
     voyant_log_init_c();
     CarbonClient::setupSignalHandling();
 
-    // Connect to a real sensor by default; pass --sim to target a local carbon_simulator.
+    // Connect to a real sensor by default; pass --sim to target a local voyant_simulator.
     bool sim = false;
     for (int i = 1; i < argc; ++i)
     {
@@ -30,13 +30,12 @@ int main(int argc, char** argv)
     CarbonConfig config;
     if (sim)
     {
-        // Point at the local carbon_simulator on loopback.
+        // Point at the local voyant_simulator on loopback.
         config.setInterfaceAddr("127.0.0.1").setFpgaTargetAddr("127.0.0.1:1234");
     }
 
     // Optional: override defaults as needed
     // config.setRangeMax(50.0f);
-    // config.setPfa(1e-4f);
 
     CarbonClient client(config);
     if (!client.start())
@@ -49,10 +48,10 @@ int main(int argc, char** argv)
 
     while (client.isRunning() && !CarbonClient::isTerminated())
     {
-        if (client.tryReceiveFrame())
+        if (auto frame = client.tryReceiveFrame())
         {
             std::cout << "###############" << std::endl;
-            std::cout << client.latestFrame() << std::endl;
+            std::cout << *frame << std::endl;
             std::cout << "Sensor State: " << client.getSensorState() << std::endl;
             std::cout << "Time Sync: " << client.getTimeSyncState() << std::endl;
         }

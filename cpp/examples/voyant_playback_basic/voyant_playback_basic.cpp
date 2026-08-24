@@ -20,8 +20,8 @@ int main(int argc, char* argv[])
     // Parse command line arguments
     PlaybackOptions options = parsePlaybackCommandLine(argc, argv);
 
-    // Create the playback instance with specified rate and looping preference
-    VoyantPlayback player(options.playbackRate, options.looping);
+    // Invalid returns are dropped as the frames are read unless keep_invalid is passed.
+    VoyantPlayback player(options.playbackRate, options.looping, options.keepInvalidPoints);
     if (!player.isValid())
     {
         std::cerr << "Failed to create VoyantPlayback instance: " << player.getLastError() << std::endl;
@@ -44,7 +44,7 @@ int main(int argc, char* argv[])
         uint64_t timestamp  = player.currentFrameTimestamp();
 
         // Access latest frame as a const reference
-        const VoyantFrameWrapper& frame = player.currentFrame();
+        const VoyantFrame& frame = player.currentFrame();
 
         // Print frame metadata & frame debug string
         std::cout << "###############" << std::endl;

@@ -32,7 +32,7 @@ int main(int argc, char** argv)
     CarbonClient::setupSignalHandling();
 
     bool refine = false;
-    bool sim    = false; // --sim targets a local carbon_simulator
+    bool sim    = false; // --sim targets a local voyant_simulator
     for (int i = 1; i < argc; ++i)
     {
         if (std::strcmp(argv[i], "--refine") == 0)
@@ -45,11 +45,11 @@ int main(int argc, char** argv)
         }
     }
 
-    // Connect to a real sensor by default; pass --sim to target a local carbon_simulator.
+    // Connect to a real sensor by default; pass --sim to target a local voyant_simulator.
     CarbonConfig config;
     if (sim)
     {
-        // Point at the local carbon_simulator on loopback.
+        // Point at the local voyant_simulator on loopback.
         config.setInterfaceAddr("127.0.0.1").setFpgaTargetAddr("127.0.0.1:1234");
     }
     CarbonClient client(config);

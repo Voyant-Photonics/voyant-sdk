@@ -57,7 +57,7 @@ def main():
                 frame_count += 1
                 print(f"Frame {frame_count}: {frame}")
 
-                # Get XYZ + radial velocity as numpy array
+                # Get XYZ + Doppler velocity as numpy array (N x 4)
                 xyzv = frame.xyzv()
                 print(f"xyzv data:\n{xyzv}\n")
                 print()

@@ -13,18 +13,22 @@
 struct PlaybackOptions
 {
     std::string filePath;
-    double      playbackRate = 1.0;
-    bool        looping      = false;
+    double      playbackRate      = 1.0;
+    bool        looping           = false;
+    bool        keepInvalidPoints = false;
 };
 
 void printUsage(const char* programName)
 {
-    std::cerr << "Usage: " << programName << " <recording_file_path> [playback_rate] [loop]" << std::endl;
+    std::cerr << "Usage: " << programName << " <recording_file_path> [playback_rate] [loop] [keep_invalid]" << std::endl;
+    std::cerr << "  recording_file_path: A .vynt recording. Convert a pre-v1.0.0 recording with" << std::endl;
+    std::cerr << "                       voyant_recording_migrate first." << std::endl;
     std::cerr << "  playback_rate: Optional, controls playback speed (default: real-time)" << std::endl;
     std::cerr << "                 0 for as-fast-as-possible" << std::endl;
     std::cerr << "                 1.0 for real-time" << std::endl;
     std::cerr << "                 2.0 for double speed, etc." << std::endl;
     std::cerr << "  loop:          Optional, 'loop' to enable looping (default: '')" << std::endl;
+    std::cerr << "  keep_invalid:  Optional, 'keep_invalid' to keep invalid points (default: dropped)" << std::endl;
 }
 
 PlaybackOptions parsePlaybackCommandLine(int argc, char* argv[])
@@ -55,6 +59,11 @@ PlaybackOptions parsePlaybackCommandLine(int argc, char* argv[])
     if (argc > 3)
     {
         options.looping = (std::string(argv[3]) == "loop");
+    }
+
+    if (argc > 4)
+    {
+        options.keepInvalidPoints = (std::string(argv[4]) == "keep_invalid");
     }
 
     return options;
