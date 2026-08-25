@@ -74,7 +74,10 @@ def main():
     print("CarbonClient started (diagnostic mode).")
 
     output = Path(args.output)
-    sidecar = output.with_name(f"{output.stem}_peaks.vynt")
+    # Assigned once the recorder resolves its timestamped name; the final report reads
+    # them after the recorder's scope has closed.
+    recorded = None
+    sidecar = None
     exit_code = 0
 
     try:
@@ -82,12 +85,16 @@ def main():
         # the first heartbeat so the sensor is actually streaming before we begin.
         client.wait_for_heartbeat()
 
-        with VoyantRecorder(str(output), timestamp_filename=False) as recorder:
+        with VoyantRecorder(str(output)) as recorder:
+            # Timestamp naming is on by default, so the resolved path is the only way to
+            # name a sidecar that pairs with the recording.
+            recorded = Path(recorder.current_file_path)
+            sidecar = recorded.with_name(f"{recorded.stem}_peaks.vynt")
             # Started only once the recording file is open, so a refused recording
             # path cannot leave an orphan sidecar behind.
             client.start_diagnostic_capture(str(sidecar))
             print(f"Diagnostic capture started -> {sidecar}")
-            print(f"Recording frames -> {output} (Ctrl+C to stop)")
+            print(f"Recording frames -> {recorded} (Ctrl+C to stop)")
             frame_count = 0
             # Caught inside the recorder's scope: Ctrl+C is the normal way to end an
             # unbounded run, so the bundle is complete and gets reported as such.
@@ -131,7 +138,7 @@ def main():
     # Announced only here: the sidecar is finalized and checked by now, so a
     # half-written bundle can't be reported as a good one.
     if exit_code == 0:
-        print(f"Support bundle: {output} + {sidecar}")
+        print(f"Support bundle: {recorded} + {sidecar}")
     return exit_code
 
 

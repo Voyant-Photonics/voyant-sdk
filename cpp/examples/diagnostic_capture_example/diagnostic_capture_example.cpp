@@ -51,16 +51,6 @@ int main(int argc, char** argv)
         }
     }
 
-    // The sidecar is named after the recording so the two files pair up. Strip the
-    // extension only at the end of the path — a directory name can contain it too.
-    const std::string suffix = ".vynt";
-    std::string       stem   = output;
-    if (stem.size() > suffix.size() && stem.compare(stem.size() - suffix.size(), suffix.size(), suffix) == 0)
-    {
-        stem.resize(stem.size() - suffix.size());
-    }
-    const std::string sidecar = stem + "_peaks.vynt";
-
     // Connect to a real sensor by default; pass --sim to target a local voyant_simulator.
     CarbonConfig config;
     if (sim)
@@ -87,15 +77,27 @@ int main(int argc, char** argv)
     }
 
     VoyantRecorderConfig recorderConfig(output);
-    recorderConfig.timestampFilename = false;
-    VoyantRecorder recorder(recorderConfig);
+    VoyantRecorder       recorder(recorderConfig);
     if (!recorder.isValid())
     {
         std::cerr << "Failed to create VoyantRecorder for " << output << ": " << recorder.getLastError() << std::endl;
         client.stop();
         return 1;
     }
-    std::cout << "Recording frames -> " << output << " (Ctrl+C to stop)" << std::endl;
+
+    // Timestamp naming is on by default, so the resolved path is the only way to name a
+    // sidecar that pairs with the recording. Strip the extension only at the end of the
+    // path — a directory name can contain it too.
+    const std::string recorded = recorder.getCurrentFilePath();
+    const std::string suffix   = ".vynt";
+    std::string       stem     = recorded;
+    if (stem.size() > suffix.size() && stem.compare(stem.size() - suffix.size(), suffix.size(), suffix) == 0)
+    {
+        stem.resize(stem.size() - suffix.size());
+    }
+    const std::string sidecar = stem + "_peaks.vynt";
+
+    std::cout << "Recording frames -> " << recorded << " (Ctrl+C to stop)" << std::endl;
 
     // Started only once the recording file is open, so a refused recording path
     // cannot leave an orphan sidecar behind.
@@ -160,9 +162,9 @@ int main(int argc, char** argv)
     // A half-written bundle must not report success — support would chase the wrong thing.
     if (recordFailed || !error.empty())
     {
-        std::cerr << "Support bundle INCOMPLETE: " << output << " + " << sidecar << std::endl;
+        std::cerr << "Support bundle INCOMPLETE: " << recorded << " + " << sidecar << std::endl;
         return 1;
     }
-    std::cout << "Support bundle: " << output << " + " << sidecar << std::endl;
+    std::cout << "Support bundle: " << recorded << " + " << sidecar << std::endl;
     return 0;
 }
