@@ -9,7 +9,6 @@ add_subdirectory(carbon_client_basic)
 add_subdirectory(voyant_recorder_basic)
 add_subdirectory(sdl_command)
 add_subdirectory(background_noise_calibration)
-add_subdirectory(diagnostic_capture_example)
 
 # Examples that work on recording files
 add_subdirectory(voyant_playback_basic)
