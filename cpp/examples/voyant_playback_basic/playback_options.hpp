@@ -42,7 +42,10 @@ PlaybackOptions parsePlaybackCommandLine(int argc, char* argv[])
     PlaybackOptions options;
     options.filePath = argv[1];
 
-    if (argc > 2)
+    // The rate is optional, so argument 2 is a rate only when it is not a flag token --
+    // otherwise 'file.vynt keep_invalid' would try to parse the flag as a number.
+    int firstFlag = 2;
+    if (argc > 2 && std::string(argv[2]) != "loop" && std::string(argv[2]) != "keep_invalid")
     {
         try
         {
@@ -54,11 +57,12 @@ PlaybackOptions parsePlaybackCommandLine(int argc, char* argv[])
             printUsage(argv[0]);
             exit(1);
         }
+        firstFlag = 3;
     }
 
     // Either order, and an unrecognized token is rejected rather than ignored -- read
     // positionally, 'keep_invalid' alone was silently dropped without a 'loop' before it.
-    for (int i = 3; i < argc; ++i)
+    for (int i = firstFlag; i < argc; ++i)
     {
         const std::string flag = argv[i];
         if (flag == "loop")

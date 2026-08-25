@@ -102,7 +102,8 @@ int main(int argc, char* argv[])
 
         VoyantFrame  edited = frame.withPoints(std::move(kept));
         RecordResult result = recorder.recordFrame(edited);
-        if (result == RecordResult::Error)
+        // Unknown is not a successful write either, so it fails alongside Error.
+        if (result == RecordResult::Error || result == RecordResult::Unknown)
         {
             std::cerr << "Failed to record frame " << edited.frameIndex() << std::endl;
             return 1;
