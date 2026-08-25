@@ -66,7 +66,7 @@ int main(int argc, char** argv)
 
     if (!recorder.isValid())
     {
-        std::cerr << "Failed to create VoyantRecorder" << std::endl;
+        std::cerr << "Failed to create VoyantRecorder" << ": " << recorder.getLastError() << std::endl;
         return -1;
     }
 

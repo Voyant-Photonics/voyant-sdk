@@ -83,7 +83,7 @@ readouts.
 
 ```bash
 ###############
-VoyantFrame(frame_index=35, n_points=24384, n_valid_points=18211, timestamp=1691391379.087803, device_id=CAR-000)
+VoyantFrame(frame_index=35, n_points=24384, n_valid_points=18211, timestamp=1691391379.087803, device_id=CAR-30-005)
 Sensor State: ...
 Time Sync: ...
 ```

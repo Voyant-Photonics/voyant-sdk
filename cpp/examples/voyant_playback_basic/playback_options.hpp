@@ -56,14 +56,25 @@ PlaybackOptions parsePlaybackCommandLine(int argc, char* argv[])
         }
     }
 
-    if (argc > 3)
+    // Either order, and an unrecognized token is rejected rather than ignored -- read
+    // positionally, 'keep_invalid' alone was silently dropped without a 'loop' before it.
+    for (int i = 3; i < argc; ++i)
     {
-        options.looping = (std::string(argv[3]) == "loop");
-    }
-
-    if (argc > 4)
-    {
-        options.keepInvalidPoints = (std::string(argv[4]) == "keep_invalid");
+        const std::string flag = argv[i];
+        if (flag == "loop")
+        {
+            options.looping = true;
+        }
+        else if (flag == "keep_invalid")
+        {
+            options.keepInvalidPoints = true;
+        }
+        else
+        {
+            std::cerr << "Unknown option: " << flag << std::endl;
+            printUsage(argv[0]);
+            exit(1);
+        }
     }
 
     return options;

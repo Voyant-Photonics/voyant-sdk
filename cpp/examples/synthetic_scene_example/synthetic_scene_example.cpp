@@ -105,7 +105,7 @@ int main(int argc, char* argv[])
     VoyantRecorder recorder(recConfig);
     if (!recorder.isValid())
     {
-        std::cerr << "Failed to create recorder for " << outputPath << std::endl;
+        std::cerr << "Failed to create recorder for " << outputPath << ": " << recorder.getLastError() << std::endl;
         return 1;
     }
 
@@ -149,6 +149,6 @@ int main(int argc, char* argv[])
     }
 
     std::cout << "Recorded " << nFrames << " synthetic frames to " << outputPath << std::endl;
-    std::cout << "View it by running voyant_visualizer and choosing " << outputPath << " via 'Open File...'" << std::endl;
+    std::cout << "View it by running: voyant_visualizer --input " << outputPath << std::endl;
     return 0;
 }

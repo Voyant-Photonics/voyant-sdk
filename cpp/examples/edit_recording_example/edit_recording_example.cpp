@@ -79,7 +79,7 @@ int main(int argc, char* argv[])
     VoyantRecorder recorder(config);
     if (!recorder.isValid())
     {
-        std::cerr << "Failed to create VoyantRecorder for " << outputPath << std::endl;
+        std::cerr << "Failed to create VoyantRecorder for " << outputPath << ": " << recorder.getLastError() << std::endl;
         return 1;
     }
 

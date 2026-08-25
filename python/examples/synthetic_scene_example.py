@@ -116,9 +116,7 @@ def main():
                 raise SystemExit(f"Failed to record frame {i}")
 
     print(f"Recorded {args.frames} synthetic frames to {args.output}")
-    print(
-        f"View it by running voyant_visualizer and choosing {args.output} via 'Open File...'"
-    )
+    print(f"View it by running: voyant_visualizer --input {args.output}")
 
 
 if __name__ == "__main__":
