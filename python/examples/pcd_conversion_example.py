@@ -13,9 +13,13 @@ By default, only the first 100 frames are converted. Use --max-frames to
 change this, or --min-frame-index / --max-frame-index to convert a specific
 range by sensor frame index.
 
-By default each .pcd file contains the standard 7 fields: x, y, z, radial_vel,
-snr_linear, nanosecs_since_frame, drop_reason. Pass --extended-format to include all
-11 fields.
+By default each .pcd file contains x, y, z plus every non-geometry recorded
+field (doppler_mps, snr, calibrated_reflectance, timestamp_nanosecs,
+azimuth_idx, elevation_idx, drop_reason, combine_method, user_data). Use
+--fields to write a custom set — any recorded fields, as long as one full
+geometry trio (x,y,z or range_m,azimuth_rad,elevation_rad) is included, e.g.:
+
+    --fields x,y,z,doppler_mps,snr
 
 Note: Frame indices reflect sensor uptime and do not start from zero
 per recording. Use --keep-invalid-points to include invalid points in
@@ -46,7 +50,8 @@ def parse_args():
         "--input",
         type=str,
         required=True,
-        help="Path to the Voyant recording file (.vynt or .bin)",
+        help="Path to the Voyant recording file (.vynt; convert a pre-v1.0.0 "
+        "recording with voyant_recording_migrate first)",
     )
     parser.add_argument(
         "--output-dir",
@@ -87,16 +92,14 @@ def parse_args():
         help="Include invalid points in converted PCD files",
     )
     parser.add_argument(
-        "--extended-format",
-        action="store_true",
-        default=False,
+        "--fields",
+        type=str,
+        default=None,
         help=(
-            "Write all extended fields (adds calibrated_reflectance, "
-            "noise_mean_estimate, min_ramp_snr, point_index) instead of the "
-            "standard 7-field format"
+            "Comma-separated PCD fields to write (must include a full geometry "
+            "trio); default writes x, y, z plus all non-geometry fields"
         ),
     )
-
     return parser.parse_args()
 
 
@@ -109,9 +112,10 @@ def main():
     converted = 0
     skipped = 0
     max_frames = args.max_frames if args.max_frames > 0 else None
+    fields = [f.strip() for f in args.fields.split(",")] if args.fields else None
 
     with VoyantPlayback(
-        filter_points=not args.keep_invalid_points,
+        keep_invalid_points=args.keep_invalid_points,
     ) as playback:
         playback.open(args.input)
 
@@ -141,15 +145,14 @@ def main():
             ###############################################
             # save_frame_to_pcd is a convenience wrapper around pcd_utils functions.
             # You can also use the individual conversions for other workflows, e.g.:
-            #   pc = pcd_utils.frame_to_xyz_pcd(frame)       # xyz only
-            #   pc = pcd_utils.frame_to_extended_pcd(frame)  # all fields
-            #   pc.save(pcd_path)                             # save manually
+            #   pc = pcd_utils.frame_to_xyz_pcd(frame)  # xyz only
+            #   pc.save(pcd_path)                       # save manually
             ###############################################
             save_frame_to_pcd(
                 frame,
                 pcd_path,
-                valid_only=not args.keep_invalid_points,
-                extended=args.extended_format,
+                keep_invalid_points=args.keep_invalid_points,
+                fields=fields,
             )
             converted += 1
 

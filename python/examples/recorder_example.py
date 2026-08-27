@@ -28,7 +28,7 @@ def parse_args():
         "--output",
         type=str,
         required=True,
-        help="Base path for the output recording file (.vynt or .bin)",
+        help="Base path for the output recording file (.vynt)",
     )
 
     # --- Network Configuration ---

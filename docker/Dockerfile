@@ -8,25 +8,12 @@ RUN apt-get update && \
     cmake \
     curl \
     g++ \
-    pkg-config \
     jq \
     libwayland-dev \
     python3 \
     python3-pip \
     wget \
     && rm -rf /var/lib/apt/lists/*
-
-# Install Cap'n Proto from source
-WORKDIR /tmp
-RUN curl -O https://capnproto.org/capnproto-c++-1.1.0.tar.gz && \
-    tar zxf capnproto-c++-1.1.0.tar.gz && \
-    cd capnproto-c++-1.1.0 && \
-    ./configure && \
-    make -j6 && \
-    make install && \
-    ldconfig && \
-    cd .. && \
-    rm -rf capnproto-c++-1.1.0*
 
 # Set working directory
 WORKDIR /workspace

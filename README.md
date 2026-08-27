@@ -77,14 +77,15 @@ Run the compiled binary example:
 ./bin/carbon_client_basic
 ```
 
-If connected to a stream (simulated or from an external device), a feed of received messages similar to the sample below will be displayed.
+If connected to a stream (simulated or from an external device), a feed of received frames
+similar to the sample below will be displayed, each followed by the sensor state and clock-sync
+readouts.
 
 ```bash
 ###############
-Received frame:
-Header{message type:2, device id:MDL-000, frame idx:35, stamp:1691391379.087802875, proto version:0.0.2, api version:0.0.2, fw version:0.0.2, hdl version:0.0.34}
-Config{ len: 0 }
-Points[24384] {{idx:6238209,ts:163840,pos:[43.984,0.193966,11.0427],v:1.22985,snr:12.3234,refl:0,noise:34.0003,min_snr:-0.00802298,drop reason:1},...}
+VoyantFrame(frame_index=35, n_points=24384, n_valid_points=18211, timestamp=1691391379.087803, device_id=CAR-30-005)
+Sensor State: ...
+Time Sync: ...
 ```
 
 ### Running the Python Examples
@@ -99,6 +100,23 @@ Run a Python example:
 
 ```bash
 python3 python/examples/client_example.py
+```
+
+### Recordings
+
+Recordings use the `.vynt` format. The playback, editing, and PCD conversion examples all
+work on a recording file; `synthetic_scene_example` writes one with no sensor attached, so
+those examples can be tried without hardware:
+
+```bash
+./bin/synthetic_scene_example my_scene.vynt 100     # C++, from the build directory
+python3 python/examples/synthetic_scene_example.py  # Python, writes synthetic_scene.vynt
+```
+
+A recording made with a pre-v1.0.0 release has to be converted once before it can be read:
+
+```bash
+voyant_recording_migrate --input drive_01.bin   # writes drive_01.vynt alongside the input
 ```
 
 ## Licensing

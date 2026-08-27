@@ -24,7 +24,8 @@ def parse_args():
     # Required argument
     parser.add_argument(
         "--input",
-        help="Path to the Voyant recording file (.vynt or .bin)",
+        help="Path to the Voyant recording file (.vynt; convert a pre-v1.0.0 "
+        "recording with voyant_recording_migrate first)",
         required=True,
     )
 
@@ -61,7 +62,7 @@ def main():
     playback = VoyantPlayback(
         rate=args.rate,
         loopback=args.loopback,
-        filter_points=not args.keep_invalid_points,
+        keep_invalid_points=args.keep_invalid_points,
     )
 
     # Open the input file

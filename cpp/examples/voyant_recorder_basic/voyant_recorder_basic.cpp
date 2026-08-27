@@ -23,7 +23,7 @@ int main(int argc, char** argv)
     // Set up signal handling for graceful shutdown (Ctrl+C)
     CarbonClient::setupSignalHandling();
 
-    // Connect to a real sensor by default; pass --sim to target a local carbon_simulator.
+    // Connect to a real sensor by default; pass --sim to target a local voyant_simulator.
     bool sim = false;
     for (int i = 1; i < argc; ++i)
     {
@@ -36,13 +36,12 @@ int main(int argc, char** argv)
     CarbonConfig config;
     if (sim)
     {
-        // Point at the local carbon_simulator on loopback.
+        // Point at the local voyant_simulator on loopback.
         config.setInterfaceAddr("127.0.0.1").setFpgaTargetAddr("127.0.0.1:1234");
     }
 
     // Optional: override defaults as needed
     // config.setRangeMax(50.0f);
-    // config.setPfa(1e-4f);
 
     CarbonClient client(config);
     if (!client.start())
@@ -67,7 +66,7 @@ int main(int argc, char** argv)
 
     if (!recorder.isValid())
     {
-        std::cerr << "Failed to create VoyantRecorder" << std::endl;
+        std::cerr << "Failed to create VoyantRecorder" << ": " << recorder.getLastError() << std::endl;
         return -1;
     }
 
@@ -77,13 +76,10 @@ int main(int argc, char** argv)
     bool shouldContinue = true;
     while (client.isRunning() && !CarbonClient::isTerminated() && shouldContinue)
     {
-        if (client.tryReceiveFrame())
+        if (auto frame = client.tryReceiveFrame())
         {
-            // Get the latest frame
-            const auto& frame = client.latestFrame();
-
             // Record the frame
-            RecordResult result = recorder.recordFrame(frame);
+            RecordResult result = recorder.recordFrame(*frame);
 
             switch (result)
             {
